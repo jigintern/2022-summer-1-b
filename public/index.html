@@ -1,34 +1,128 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="jp">
 <head>
-  <meta charset="utf-8">
+    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <title>テスト入力フォーム</title>
 </head>
 
 <body>
-  <h1 id="welcomeMessage"></h1>
-  <input type="text" id="text" placeholder="テキストを入力" class="box">
-  <input type="button" value="送信" id="textsend" class="button"/>
-  <script type="module">
-    window.onload = async (event) => {
-      const response = await fetch("/welcome-message");
-      document.querySelector("#welcomeMessage").innerText = await response.text();
-    };
+    <h1>テスト入力フォーム</h1>
 
-    document.querySelector("#textsend").onclick = async (event) => {
-        const nextWord = document.querySelector("#text").value;
-        const response = await fetch("/welcome-message", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nextWord })
-        });
-        console.log(await response.text());
-        //formクリア
-        var textForm = document.getElementById("text");
-        textForm.value = '';
+    <p>
+        <span class="required">*</span>
+        <span>は必須項目</span>
+    </p>
+
+    <p>
+        <label for="userNameInput">
+            <span><b>名前</b></span> <br>
+        </label>
+        <input type="text" id="userNameInput">
+    </p>
+
+    <p>
+        <label for="photoInput">
+            <span class="required">*</span>
+            <span><b>自動販売機の写真</b></span> <br>
+        </label>
+        <input type="file" id="photoInput" accept="image/*" required>
+    </p>
+
+    <p>
+        <label for="latitudeInput">
+            <span class="required">*</span>
+            <span><b>緯度</b></span> <br>
+        </label>
+        <input type="number" id ="latitudeInput" min="-90.0" max="90.0" step="0.0000001" required>
+    </p>
+
+    <p>
+        <label for="longitudeInput">
+            <span class="required">*</span>
+            <span><b>経度</b></span> <br>
+        </label>
+        <input type="number" id ="longitudeInput" min="-180.0" max="180.0" step="0.0000001" required>
+    </p>
+
+    <p>
+        <button id="getLocation">現在位置を取得</button>
+    </p>
+
+    <p>
+        <button id="sendForm">送信</button>
+    </p>
+
+    <p>
+        <label for="debug">
+            <span><b>デバッグ用</b></span> <br>
+        </label>
+        <textarea id="debug" rows="15" cols="60"></textarea>
+    </p>
+
+    <script type="module">
+        //「現在位置を取得」ボタンを押すと実行される
+        document.querySelector("#getLocation").onclick = async (event) => {
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            };
+
+            function success(pos) {
+                const coords = pos.coords;
+                document.querySelector("#latitudeInput").value = coords.latitude;
+                document.querySelector("#longitudeInput").value = coords.longitude;
+            }
+
+            function error(err) {
+                const msg = "位置情報の取得に失敗しました\n" + `Error Code: ${err.code}\n` + `${err.message}`
+                alert(msg);
+            }
+
+            navigator.geolocation.getCurrentPosition(success, error, options);
         };
 
-  </script>
+        //「送信」ボタンを押すと実行される
+        document.querySelector("#sendForm").onclick = async (event) => {
+            const userName = document.querySelector("#userNameInput").value;
+            const photo = document.querySelector("#photoInput").files;
+            const latitude = document.querySelector("#latitudeInput").value;
+            const longitude = document.querySelector("#longitudeInput").value;
+
+            //入力必須なデータが空ならばreturn
+            if (photo.length === 0)  {
+                alert("写真が選択されていません");
+                return;
+            }
+
+            if (latitude.length === 0) {
+                alert("緯度が入力されていません");
+                return;
+            }
+
+            if (longitude.length === 0) {
+                alert("経度が入力されていません");
+                return;
+            }
+
+            const response = await fetch("/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({userName, photo, latitude, longitude})
+            });
+
+            if (response.status / 100 !== 2) {
+                console.log(await response.text());
+                return;
+            }
+
+            const responseText = await response.text();
+
+            console.log("[FormJSON]\n" + responseText);
+            document.querySelector("#debug").value = responseText;
+        };
+    </script>
 </body>
 
 </html>

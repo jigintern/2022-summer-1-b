@@ -1,0 +1,8 @@
+body {
+    background: #c1deb8;
+}
+
+.required {
+    color: red;
+    font-weight: bold;
+}
