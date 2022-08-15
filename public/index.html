@@ -16,18 +16,17 @@
     };
 
     document.querySelector("#textsend").onclick = async (event) => {
-        const textWord = document.querySelector("#text").value;
-        const response = await fetch("/text", {
+        const nextWord = document.querySelector("#text").value;
+        const response = await fetch("/welcome-message", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ textWord })
+        body: JSON.stringify({ nextWord })
         });
-
         //formクリア
         var textForm = document.getElementById("text");
         textForm.value = '';
         };
-        
+
   </script>
 </body>
 
