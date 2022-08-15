@@ -7,12 +7,27 @@
 
 <body>
   <h1 id="welcomeMessage"></h1>
-
+  <input type="text" id="text" placeholder="テキストを入力" class="box">
+  <input type="button" value="送信" id="textsend" class="button"/>
   <script type="module">
     window.onload = async (event) => {
       const response = await fetch("/welcome-message");
       document.querySelector("#welcomeMessage").innerText = await response.text();
     };
+
+    document.querySelector("#textsend").onclick = async (event) => {
+        const nextWord = document.querySelector("#text").value;
+        const response = await fetch("/welcome-message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nextWord })
+        });
+        console.log(await response.text());
+        //formクリア
+        var textForm = document.getElementById("text");
+        textForm.value = '';
+        };
+
   </script>
 </body>
 
