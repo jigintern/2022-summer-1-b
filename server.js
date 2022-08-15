@@ -12,6 +12,7 @@ serve(async (req) => {
     const requestJson = await req.json();
     const nextWord = requestJson.nextWord;
     console.log(nextWord);
+    return new Response("前の単語に続いていません。", { status: 200 });
   }
 
 
