@@ -8,6 +8,12 @@ serve(async (req) => {
   if (req.method === "GET" && pathname === "/welcome-message") {
     return new Response("I have a pen.");
   }
+  if (req.method === "POST" && pathname === "/welcome-message") {
+    const requestJson = await req.json();
+    const nextWord = requestJson.nextWord;
+    console.log(nextWord);
+  }
+
 
   return serveDir(req, {
     fsRoot: "public",
