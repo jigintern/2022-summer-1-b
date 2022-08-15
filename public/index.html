@@ -22,6 +22,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nextWord })
         });
+        console.log(await response.text());
         //formクリア
         var textForm = document.getElementById("text");
         textForm.value = '';

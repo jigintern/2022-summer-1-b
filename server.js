@@ -12,7 +12,7 @@ serve(async (req) => {
     const requestJson = await req.json();
     const nextWord = requestJson.nextWord;
     console.log(nextWord);
-    return new Response("OK", { status: 200 });
+    return new Response(nextWord, { status: 200 });
   }
 
 
