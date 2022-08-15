@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="jp">
 <head>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="styles.css">
     <meta charset="UTF-8">
     <title>テスト入力フォーム</title>
@@ -9,59 +10,73 @@
 <body>
     <h1>テスト入力フォーム</h1>
 
-    <p>
-        <span class="required">*</span>
-        <span>は必須項目</span>
-    </p>
+    <div class="col-5 mb-3">
+        <label for="userNameInput" class="form-label"><b>名前</b></label>
+        <input type="text" class="form-control" id="userNameInput">
+    </div>
 
-    <p>
-        <label for="userNameInput">
-            <span><b>名前</b></span> <br>
-        </label>
-        <input type="text" id="userNameInput">
-    </p>
-
-    <p>
-        <label for="photoInput">
-            <span class="required">*</span>
-            <span><b>自動販売機の写真</b></span> <br>
-        </label>
-        <input type="file" id="photoInput" accept="image/*" required>
-    </p>
-
-    <p>
+    <div class="col-2 mb-3">
         <label for="latitudeInput">
             <span class="required">*</span>
             <span><b>緯度</b></span> <br>
         </label>
-        <input type="number" id ="latitudeInput" min="-90.0" max="90.0" step="0.0000001" required>
-    </p>
+        <input type="number" class="form-control" id ="latitudeInput" min="-90.0" max="90.0" step="0.0000001" required>
+    </div>
 
-    <p>
+    <div class="col-2 mb-3">
         <label for="longitudeInput">
             <span class="required">*</span>
             <span><b>経度</b></span> <br>
         </label>
-        <input type="number" id ="longitudeInput" min="-180.0" max="180.0" step="0.0000001" required>
-    </p>
+        <input type="number" class="form-control" id ="longitudeInput" min="-180.0" max="180.0" step="0.0000001" required>
+    </div>
 
-    <p>
-        <button id="getLocation">現在位置を取得</button>
-    </p>
+    <div class="col-2 mb-3">
+        <button id="getLocation" class="btn btn-secondary">現在位置を取得</button>
+    </div>
 
-    <p>
-        <button id="sendForm">送信</button>
-    </p>
-
-    <p>
-        <label for="debug">
-            <span><b>デバッグ用</b></span> <br>
+    <div class="col-5 mb-3">
+        <label for="photoInput">
+            <span class="required">*</span>
+            <span><b>自動販売機の写真</b></span>
         </label>
-        <textarea id="debug" rows="15" cols="60"></textarea>
-    </p>
+        <input type="file" class="form-control" id="photoInput" accept="image/*" required>
+    </div>
+
+    <div class="col-2 mb-3">
+        <button id="sendForm" class="btn btn-success" disabled>送信</button>
+    </div>
+
+    <div class="col-4 mb-3">
+        <label for="debug"><span><b>デバッグ用</b></span></label>
+        <textarea id="debug" class="form-control" rows="15" cols="60"></textarea>
+    </div>
 
     <script type="module">
-        //「現在位置を取得」ボタンを押すと実行される
+        // 要素
+        const elemUserName = document.querySelector("#userNameInput");
+        const elemLatitude = document.querySelector("#latitudeInput");
+        const elemLongitude = document.querySelector("#longitudeInput");
+        const elemPhoto = document.querySelector("#photoInput");
+        elemPhoto.onchange = checkEmpty;
+        elemLatitude.oninput = checkEmpty;
+        elemLongitude.oninput = checkEmpty;
+
+        // 入力必須な項目が空かどうかを判定する
+        function checkEmpty() {
+            const b1 = elemPhoto.files.length > 0;
+            const b2 = elemLatitude.value.length > 0;
+            const b3 = elemLongitude.value.length > 0;
+
+            console.log("^ " + elemPhoto.files.length);
+            console.log("^ " + elemLatitude.value.length);
+            console.log("^ " + elemLongitude.value.length);
+
+            if (b1 && b2 && b3)
+                document.querySelector("#sendForm").disabled = false;
+        }
+
+        // 「現在位置を取得」ボタンを押すと実行される
         document.querySelector("#getLocation").onclick = async (event) => {
             const options = {
                 enableHighAccuracy: true,
@@ -81,35 +96,22 @@
             }
 
             navigator.geolocation.getCurrentPosition(success, error, options);
+
+            checkEmpty();
         };
 
-        //「送信」ボタンを押すと実行される
+        // 「送信」ボタンを押すと実行される
         document.querySelector("#sendForm").onclick = async (event) => {
+            // 要素
             const userName = document.querySelector("#userNameInput").value;
-            const photo = document.querySelector("#photoInput").files;
             const latitude = document.querySelector("#latitudeInput").value;
             const longitude = document.querySelector("#longitudeInput").value;
-
-            //入力必須なデータが空ならばreturn
-            if (photo.length === 0)  {
-                alert("写真が選択されていません");
-                return;
-            }
-
-            if (latitude.length === 0) {
-                alert("緯度が入力されていません");
-                return;
-            }
-
-            if (longitude.length === 0) {
-                alert("経度が入力されていません");
-                return;
-            }
+            const photo = document.querySelector("#photoInput").files;
 
             const response = await fetch("/submit", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({userName, photo, latitude, longitude})
+                body: JSON.stringify({userName, latitude, longitude, photo})
             });
 
             if (response.status / 100 !== 2) {
@@ -123,6 +125,8 @@
             document.querySelector("#debug").value = responseText;
         };
     </script>
+
+    <script src="js/bootstrap.min.js"></script>
 </body>
 
 </html>

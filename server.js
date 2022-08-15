@@ -26,11 +26,11 @@ serve(async (req) => {
   if (req.method === "POST" && pathName === "/submit") {
     const requestJson = await req.json();
     const userName = requestJson.userName;
-    const photo = requestJson.photo;
     const latitude = requestJson.latitude;
     const longitude = requestJson.longitude;
+    const photo = requestJson.photo;
 
-    const result = JSON.stringify({userName, photo, latitude, longitude});
+    const result = JSON.stringify({userName, latitude, longitude, photo});
 
     console.log("[POSTED]");
     console.log("result: " + result);
