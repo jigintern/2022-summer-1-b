@@ -10,7 +10,163 @@
 </head>
 
 <body>
-    <div id="map"></div>
+    <div id="content">
+        <nav>
+            <p>登録フォーム</p>
+            <h1>テスト入力フォーム</h1>
+
+            <div class="col-5 mb-3">
+                <label for="userNameInput" class="form-label"><b>名前</b></label>
+                <input type="text" class="form-control" id="userNameInput">
+            </div>
+        
+            <div class="col-2 mb-3">
+                <label for="latitudeInput">
+                    <span class="required">*</span>
+                    <span><b>緯度</b></span> <br>
+                </label>
+                <input size="5" type="number" class="form-control" id ="latitudeInput" min="-90.0" max="90.0" step="0.0000001" required>
+            </div>
+        
+            <div class="col-2 mb-3">
+                <label for="longitudeInput">
+                    <span class="required">*</span>
+                    <span><b>経度</b></span> <br>
+                </label>
+                <input type="number" class="form-control" id ="longitudeInput" min="-180.0" max="180.0" step="0.0000001" required>
+            </div>
+        
+            <div class="col-2 mb-3">
+                <button id="getLocation" class="btn btn-secondary">現在位置を取得</button>
+            </div>
+        
+            <div class="col-5 mb-3">
+                <label for="photoInput">
+                    <span class="required">*</span>
+                    <span><b>自動販売機の写真</b></span>
+                </label>
+                <input type="file" class="form-control" id="photoInput" accept="image/*" required>
+        
+                <img id="thumbnail" class="img-thumbnail" alt="サムネイル" src="" hidden>
+            </div>
+        
+            <div class="col-2 mb-3">
+                <button id="sendForm" class="btn btn-success" disabled>送信</button>
+            </div>
+        
+            <div class="col-4 mb-3">
+                <label for="debug"><span><b>デバッグ用</b></span></label>
+                <textarea id="debug" class="form-control" rows="15" cols="60"></textarea>
+            </div>
+        
+            <script type="module">
+                $(function () {
+                    // 要素
+                    const elemUserName = $("#userNameInput");
+                    const elemLatitude = $("#latitudeInput");
+                    const elemLongitude = $("#longitudeInput");
+                    const elemPhoto = $("#photoInput");
+                    const elemSendForm = $("#sendForm");
+        
+                    elemPhoto.on("change", checkEmpty);
+                    elemLatitude.on("input", checkEmpty);
+                    elemLongitude.on("input", checkEmpty);
+        
+                    // 入力必須な項目が空かどうかを判定する
+                    function checkEmpty() {
+                        const b1 = elemLatitude.val().length > 0;
+                        const b2 = elemLongitude.val().length > 0;
+                        const b3 = elemPhoto.prop("files").length > 0;
+        
+                        elemSendForm.prop("disabled", !(b1 && b2 && b3));
+                    }
+        
+                    // 「現在位置を取得」ボタンを押すと実行される
+                    $("#getLocation").on("click", function () {
+                        const options = {
+                            enableHighAccuracy: true,
+                            timeout: 5000,
+                            maximumAge: 0
+                        };
+        
+                        function success(pos) {
+                            const coords = pos.coords;
+                            document.querySelector("#latitudeInput").value = coords.latitude;
+                            document.querySelector("#longitudeInput").value = coords.longitude;
+                        }
+        
+                        function error(err) {
+                            const msg = "位置情報の取得に失敗しました\n" + `Error Code: ${err.code}\n` + `${err.message}`
+                            alert(msg);
+                        }
+        
+                        navigator.geolocation.getCurrentPosition(success, error, options);
+        
+                        checkEmpty();
+                    });
+        
+                    // 「送信」ボタンを押すと実行される
+                    elemSendForm.on("click", function () {
+                        // 要素
+                        const userName = $("#userNameInput").val();
+                        const latitude = $("#latitudeInput").val();
+                        const longitude = $("#longitudeInput").val();
+                        const photo = $("#photoInput").prop("files")[0];
+        
+                        /*
+                        const response = fetch("/submit", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({userName, latitude, longitude, photo})
+                        });
+        
+                        if (response.status / 100 !== 2) {
+                            console.log(response);
+                            return;
+                        }
+                        */
+        
+                        const jsonString = JSON.stringify({userName, latitude, longitude, photo});
+                        $.ajax({
+                            url: "/submit",
+                            type: "POST",
+                            async: true,
+                            contentType: "application/json",
+                            data: jsonString,
+                            dataType: "json"
+                        });
+        
+                        console.log("[FormJSON]\n" + jsonString);
+                        $("#debug").val(jsonString);
+                    });
+        
+                    /*
+                    // ファイルが読み込まれた時に実行
+                    elemPhoto.onchange = async (event) => {
+                        const thumbnail = document.querySelector("#thumbnail");
+                        const file = event.target.files[0];
+                        const reader = new FileReader();
+        
+                        reader.onload = (function (file) {
+                            return function (e) {
+        
+                            };
+                        });
+                    };
+        
+                     */
+                });
+            </script>
+        
+            <script src="js/bootstrap.min.js"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        </nav>
+        <div id="map"></div>
+
+        <div id="main">
+            <p>ピンの情報</p>
+        </div>
+    
     <script type="module">
         // 地図を作成する
         var mymap = L.map('map');

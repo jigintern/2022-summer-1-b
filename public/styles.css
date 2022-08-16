@@ -7,6 +7,30 @@ body {
     font-weight: bold;
 }
 #map {
-    height: 500px;
-    width: 700px;
+    left: 40%;
+    height: 450px;
+    width: 760px;
   }
+
+  div#content {
+    /* background-color: #99cc33; */
+    width: 100%;
+    overflow: hidden;
+    }
+
+ div#main {
+    /* background-color: #ffffff; */
+    width: 50%;
+    float: right;
+     }    
+
+     nav {
+        position: absolute;
+        left:0%;
+        /* color: #800000;  */
+        /* background-color: #00ffff; */
+        width: 1000px;
+        float: left;
+        
+        }
+
