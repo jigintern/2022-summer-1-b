@@ -108,6 +108,7 @@
                 const longitude = $("#longitudeInput").val();
                 const photo = $("#photoInput").prop("files")[0];
 
+                /*
                 const response = fetch("/submit", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -118,11 +119,20 @@
                     console.log(response);
                     return;
                 }
+                */
 
-                const responseText = response.text();
+                const jsonString = JSON.stringify({userName, latitude, longitude, photo});
+                $.ajax({
+                    url: "/submit",
+                    type: "POST",
+                    async: true,
+                    contentType: "application/json",
+                    data: jsonString,
+                    dataType: "json"
+                });
 
-                console.log("[FormJSON]\n" + responseText);
-                $("#debug").val(responseText);
+                console.log("[FormJSON]\n" + jsonString);
+                $("#debug").val(jsonString);
             });
 
             /*
