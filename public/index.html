@@ -41,6 +41,8 @@
             <span><b>自動販売機の写真</b></span>
         </label>
         <input type="file" class="form-control" id="photoInput" accept="image/*" required>
+
+        <img id="thumbnail" class="img-thumbnail" alt="サムネイル" src="" hidden>
     </div>
 
     <div class="col-2 mb-3">
@@ -53,80 +55,96 @@
     </div>
 
     <script type="module">
-        // 要素
-        const elemUserName = document.querySelector("#userNameInput");
-        const elemLatitude = document.querySelector("#latitudeInput");
-        const elemLongitude = document.querySelector("#longitudeInput");
-        const elemPhoto = document.querySelector("#photoInput");
-        elemPhoto.onchange = checkEmpty;
-        elemLatitude.oninput = checkEmpty;
-        elemLongitude.oninput = checkEmpty;
-
-        // 入力必須な項目が空かどうかを判定する
-        function checkEmpty() {
-            const b1 = elemPhoto.files.length > 0;
-            const b2 = elemLatitude.value.length > 0;
-            const b3 = elemLongitude.value.length > 0;
-
-            console.log("^ " + elemPhoto.files.length);
-            console.log("^ " + elemLatitude.value.length);
-            console.log("^ " + elemLongitude.value.length);
-
-            if (b1 && b2 && b3)
-                document.querySelector("#sendForm").disabled = false;
-        }
-
-        // 「現在位置を取得」ボタンを押すと実行される
-        document.querySelector("#getLocation").onclick = async (event) => {
-            const options = {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 0
-            };
-
-            function success(pos) {
-                const coords = pos.coords;
-                document.querySelector("#latitudeInput").value = coords.latitude;
-                document.querySelector("#longitudeInput").value = coords.longitude;
-            }
-
-            function error(err) {
-                const msg = "位置情報の取得に失敗しました\n" + `Error Code: ${err.code}\n` + `${err.message}`
-                alert(msg);
-            }
-
-            navigator.geolocation.getCurrentPosition(success, error, options);
-
-            checkEmpty();
-        };
-
-        // 「送信」ボタンを押すと実行される
-        document.querySelector("#sendForm").onclick = async (event) => {
+        $(function () {
             // 要素
-            const userName = document.querySelector("#userNameInput").value;
-            const latitude = document.querySelector("#latitudeInput").value;
-            const longitude = document.querySelector("#longitudeInput").value;
-            const photo = document.querySelector("#photoInput").files;
+            const elemUserName = $("#userNameInput");
+            const elemLatitude = $("#latitudeInput");
+            const elemLongitude = $("#longitudeInput");
+            const elemPhoto = $("#photoInput");
+            const elemSendForm = $("#sendForm");
 
-            const response = await fetch("/submit", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({userName, latitude, longitude, photo})
+            elemPhoto.on("change", checkEmpty);
+            elemLatitude.on("input", checkEmpty);
+            elemLongitude.on("input", checkEmpty);
+
+            // 入力必須な項目が空かどうかを判定する
+            function checkEmpty() {
+                const b1 = elemLatitude.val().length > 0;
+                const b2 = elemLongitude.val().length > 0;
+                const b3 = elemPhoto.prop("files").length > 0;
+
+                elemSendForm.prop("disabled", !(b1 && b2 && b3));
+            }
+
+            // 「現在位置を取得」ボタンを押すと実行される
+            $("#getLocation").on("click", function () {
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                };
+
+                function success(pos) {
+                    const coords = pos.coords;
+                    document.querySelector("#latitudeInput").value = coords.latitude;
+                    document.querySelector("#longitudeInput").value = coords.longitude;
+                }
+
+                function error(err) {
+                    const msg = "位置情報の取得に失敗しました\n" + `Error Code: ${err.code}\n` + `${err.message}`
+                    alert(msg);
+                }
+
+                navigator.geolocation.getCurrentPosition(success, error, options);
+
+                checkEmpty();
             });
 
-            if (response.status / 100 !== 2) {
-                console.log(await response.text());
-                return;
-            }
+            // 「送信」ボタンを押すと実行される
+            elemSendForm.on("click", function () {
+                // 要素
+                const userName = $("#userNameInput").val();
+                const latitude = $("#latitudeInput").val();
+                const longitude = $("#longitudeInput").val();
+                const photo = $("#photoInput").prop("files")[0];
 
-            const responseText = await response.text();
+                const response = fetch("/submit", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({userName, latitude, longitude, photo})
+                });
 
-            console.log("[FormJSON]\n" + responseText);
-            document.querySelector("#debug").value = responseText;
-        };
+                if (response.status / 100 !== 2) {
+                    console.log(response);
+                    return;
+                }
+
+                const responseText = response.text();
+
+                console.log("[FormJSON]\n" + responseText);
+                $("#debug").val(responseText);
+            });
+
+            /*
+            // ファイルが読み込まれた時に実行
+            elemPhoto.onchange = async (event) => {
+                const thumbnail = document.querySelector("#thumbnail");
+                const file = event.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = (function (file) {
+                    return function (e) {
+
+                    };
+                });
+            };
+
+             */
+        });
     </script>
 
     <script src="js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 
 </html>
