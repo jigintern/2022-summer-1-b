@@ -1,0 +1,12 @@
+body {
+    background: #c1deb8;
+}
+
+.required {
+    color: red;
+    font-weight: bold;
+}
+#map {
+    height: 500px;
+    width: 700px;
+  }
