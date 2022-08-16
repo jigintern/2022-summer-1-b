@@ -32,14 +32,19 @@ serve(async (req) => {
             }
 
             case "POST": {
-                const user_id = await req.json().catch(() => null);
+                const json = await req.json();
+                const user_id = json.user_id;
+                const lat = json.lat;
+                const long = json.long;
+                const photo = json.photo;
+                const date = json.date;
 
                 if (typeof user_id !== "string" || user_id.length > 256) {
                     return new Response("Bad Request", { status: 400 });
                 }
 
                 await connection.queryObject`
-                    INSERT INTO register (user_id) VALUES (${user_id});
+                    INSERT INTO register VALUES (${user_id}, ${lat}, ${long}, ${photo}, ${date});
                 `;
 
                 return new Response("Created", { status: 201 });
