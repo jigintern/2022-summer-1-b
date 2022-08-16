@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    
     <div id="content">
         <nav>
             <h1>登録フォーム</h1>
@@ -164,6 +165,7 @@
 
         <div id="main">
             <p>ピンの情報</p>
+            <div id = "idName"></div>
         </div>
     
     <script type="module">
@@ -178,8 +180,32 @@
          var popup2 = L.popup().setContent("マップピンです");
          // 地図の中心座標とズームレベルを設定する
          mymap.setView([34.4822647, 135.8242605], 10);
-        //  L.marker([34.4822647, 136.8242605],{title:"桜区役所"}).addTo(mymap);
          L.marker([34.4822647, 135.8242605]).bindPopup(popup2).bindTooltip("マップピン").addTo(mymap);
+
+
+         var markers=[];
+         markers[0]=[34.2822647,135.2242605,5,7]
+         markers[1]=[34.0822647,135.0242605,3,4]
+
+         var marker_cnt = markers.length;
+				for(var i=0; i<marker_cnt; i++){
+					// SetMarker(parseFloat(markers[i]['lat']), parseFloat(markers[i]['lng']),markers[i]['user_id'],markers[i]['photo'],merkers[i]['date']);
+                    SetMarker(markers[i][0],markers[i][1],markers[i][2],markers[i][3]);
+				}
+        //マーカー生成
+        // SetMarker(34.2822647,135.2242605,13, 8/16)
+                function SetMarker(lat, lng, user_id, date){
+                    console.log('ピン生成');
+                    markers[i]=L.marker([lat,lng]).addTo(mymap).on( 'click', function(e) {  clickEvt(e); });
+                    markers[i].user = user_id;
+                    markers[i].date = date;
+                }
+                //マーカークリック
+                function clickEvt(e){
+                    console.log(e.target.user, e.target.date);
+                    document.getElementById("idName").innerHTML = "ユーザーid:"+e.target.user +"日時:"+e.target.date;
+                }
+
         </script>
 
 
