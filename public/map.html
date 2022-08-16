@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <title>マップ</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script type="module">
+        // 地図を作成する
+        var mymap = L.map('map');
+         
+         // タイルレイヤーを作成し、地図にセットする
+         L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
+           maxZoom: 18,
+           attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">国土地理院</a>',
+         }).addTo(mymap);
+         var popup2 = L.popup().setContent("マップピンです");
+         // 地図の中心座標とズームレベルを設定する
+         mymap.setView([34.4822647, 135.8242605], 10);
+        //  L.marker([34.4822647, 136.8242605],{title:"桜区役所"}).addTo(mymap);
+         L.marker([34.4822647, 135.8242605]).bindPopup(popup2).bindTooltip("マップピン").addTo(mymap);
+        </script>
+
+
+    <!-- <script src="js/bootstrap.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+
