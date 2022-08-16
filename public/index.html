@@ -55,6 +55,14 @@
     </div>
 
     <script type="module">
+        // ランダムなUUIDの生成
+        function randomUUID(){
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(a) {
+                let r = (new Date().getTime() + Math.random() * 16)%16 | 0, v = a === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
         $(function () {
             // 要素
             const elemUserName = $("#userNameInput");
@@ -106,7 +114,7 @@
                 const user_id = $("#userNameInput").val();
                 const lat = $("#latitudeInput").val();
                 const long = $("#longitudeInput").val();
-                const photo = $("#photoInput").prop("files")[0];
+                const photo = randomUUID();
                 const formatted = new Date().toISOString();
                 const date = formatted.split(".")[0];
 

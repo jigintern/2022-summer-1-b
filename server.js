@@ -14,13 +14,6 @@ const databaseUrl = "postgres://postgres:jigintern2022@db.tderfuecifzjrpfwsplc.s
 // 接続
 const pool = new postgres.Pool(databaseUrl, 3, true);
 
-function randomUUID(){
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(a) {
-    let r = (new Date().getTime() + Math.random() * 16)%16 | 0, v = a === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
-
 serve(async (req) => {
   const pathName = new URL(req.url).pathname;
 
@@ -71,7 +64,7 @@ serve(async (req) => {
           const user_id = json.user_id;
           const lat = json.lat;
           const long = json.long;
-          const photo = randomUUID();
+          const photo = json.photo;
           const date = json.date;
 
           // 入力必須が空の場合は400を返す
@@ -80,8 +73,8 @@ serve(async (req) => {
           }
 
           await connection.queryObject`
-                    INSERT INTO posts VALUES (${user_id}, ${lat}, ${long}, ${photo}, ${date});
-                `;
+            INSERT INTO posts VALUES (${user_id}, ${lat}, ${long}, ${photo}, ${date});
+          `;
 
           return new Response("Created", { status: 201 });
         }
