@@ -11,7 +11,7 @@ const pool = new postgres.Pool(databaseUrl, 3, true);
 serve(async (req) => {
     const url = new URL(req.url);
 
-    if (url.pathname !== "/register") {
+    if (url.pathname !== "/posts") {
         return new Response("Not Found", { status: 404 });
     }
 
@@ -21,7 +21,7 @@ serve(async (req) => {
         switch (req.method) {
             case "GET": {
                 const result = await connection.queryObject`
-                    SELECT * FROM register
+                    SELECT * FROM posts
                 `;
 
                 const body = JSON.stringify(result.rows, null, 5);
@@ -39,12 +39,13 @@ serve(async (req) => {
                 const photo = json.photo;
                 const date = json.date;
 
-                if (typeof user_id !== "string" || user_id.length > 256) {
+                // 入力必須が空の場合は400を返す
+                if (lat.length < 1 || long.length < 1 || photo.length < 1 || date.length < 1) {
                     return new Response("Bad Request", { status: 400 });
                 }
 
                 await connection.queryObject`
-                    INSERT INTO register VALUES (${user_id}, ${lat}, ${long}, ${photo}, ${date});
+                    INSERT INTO posts VALUES (${user_id}, ${lat}, ${long}, ${photo}, ${date});
                 `;
 
                 return new Response("Created", { status: 201 });
