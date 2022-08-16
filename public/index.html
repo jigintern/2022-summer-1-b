@@ -103,13 +103,15 @@
             // 「送信」ボタンを押すと実行される
             elemSendForm.on("click", function () {
                 // 要素
-                const userName = $("#userNameInput").val();
-                const latitude = $("#latitudeInput").val();
-                const longitude = $("#longitudeInput").val();
+                const user_id = $("#userNameInput").val();
+                const lat = $("#latitudeInput").val();
+                const long = $("#longitudeInput").val();
                 const photo = $("#photoInput").prop("files")[0];
+                const formatted = new Date().toISOString();
+                const date = formatted.split(".")[0];
 
                 /*
-                const response = fetch("/submit", {
+                const response = fetch("/posts", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({userName, latitude, longitude, photo})
@@ -121,9 +123,9 @@
                 }
                 */
 
-                const jsonString = JSON.stringify({userName, latitude, longitude, photo});
+                const jsonString = JSON.stringify({user_id, lat, long, photo, date});
                 $.ajax({
-                    url: "/submit",
+                    url: "/posts",
                     type: "POST",
                     async: true,
                     contentType: "application/json",
