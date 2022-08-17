@@ -4,158 +4,224 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="styles.css">
     <meta charset="UTF-8">
-    <title>テスト入力フォーム</title>
+    <title>マップ表示</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
 </head>
 
 <body>
-    <h1>テスト入力フォーム</h1>
+        <nav>
+            <h1>登録フォーム</h1>
 
-    <div class="col-5 mb-3">
-        <label for="userNameInput" class="form-label"><b>名前</b></label>
-        <input type="text" class="form-control" id="userNameInput">
-    </div>
-
-    <div class="col-2 mb-3">
-        <label for="latitudeInput">
-            <span class="required">*</span>
-            <span><b>緯度</b></span> <br>
-        </label>
-        <input type="number" class="form-control" id ="latitudeInput" min="-90.0" max="90.0" step="0.0000001" required>
-    </div>
-
-    <div class="col-2 mb-3">
-        <label for="longitudeInput">
-            <span class="required">*</span>
-            <span><b>経度</b></span> <br>
-        </label>
-        <input type="number" class="form-control" id ="longitudeInput" min="-180.0" max="180.0" step="0.0000001" required>
-    </div>
-
-    <div class="col-2 mb-3">
-        <button id="getLocation" class="btn btn-secondary">現在位置を取得</button>
-    </div>
-
-    <div class="col-5 mb-3">
-        <label for="photoInput">
-            <span class="required">*</span>
-            <span><b>自動販売機の写真</b></span>
-        </label>
-        <input type="file" class="form-control" id="photoInput" accept="image/*" required>
-
-        <img id="thumbnail" class="img-thumbnail" alt="サムネイル" src="" hidden>
-    </div>
-
-    <div class="col-2 mb-3">
-        <button id="sendForm" class="btn btn-success" disabled>送信</button>
-    </div>
-
-    <div class="col-4 mb-3">
-        <label for="debug"><span><b>デバッグ用</b></span></label>
-        <textarea id="debug" class="form-control" rows="15" cols="60"></textarea>
-    </div>
-    <a href="/map.html"><font size="4">マップ</font><br></a>
-
-    <script type="module">
-        $(function () {
-            // 要素
-            const elemUserName = $("#userNameInput");
-            const elemLatitude = $("#latitudeInput");
-            const elemLongitude = $("#longitudeInput");
-            const elemPhoto = $("#photoInput");
-            const elemSendForm = $("#sendForm");
-
-            elemPhoto.on("change", checkEmpty);
-            elemLatitude.on("input", checkEmpty);
-            elemLongitude.on("input", checkEmpty);
-
-            // 入力必須な項目が空かどうかを判定する
-            function checkEmpty() {
-                const b1 = elemLatitude.val().length > 0;
-                const b2 = elemLongitude.val().length > 0;
-                const b3 = elemPhoto.prop("files").length > 0;
-
-                elemSendForm.prop("disabled", !(b1 && b2 && b3));
-            }
-
-            // 「現在位置を取得」ボタンを押すと実行される
-            $("#getLocation").on("click", function () {
-                const options = {
-                    enableHighAccuracy: true,
-                    timeout: 5000,
-                    maximumAge: 0
-                };
-
-                function success(pos) {
-                    const coords = pos.coords;
-                    document.querySelector("#latitudeInput").value = coords.latitude;
-                    document.querySelector("#longitudeInput").value = coords.longitude;
-                }
-
-                function error(err) {
-                    const msg = "位置情報の取得に失敗しました\n" + `Error Code: ${err.code}\n` + `${err.message}`
-                    alert(msg);
-                }
-
-                navigator.geolocation.getCurrentPosition(success, error, options);
-
-                checkEmpty();
-            });
-
-            // 「送信」ボタンを押すと実行される
-            elemSendForm.on("click", function () {
-                // 要素
-                const userName = $("#userNameInput").val();
-                const latitude = $("#latitudeInput").val();
-                const longitude = $("#longitudeInput").val();
-                const photo = $("#photoInput").prop("files")[0];
-
-                /*
-                const response = fetch("/submit", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({userName, latitude, longitude, photo})
-                });
-
-                if (response.status / 100 !== 2) {
-                    console.log(response);
-                    return;
-                }
-                */
-
-                const jsonString = JSON.stringify({userName, latitude, longitude, photo});
-                $.ajax({
-                    url: "/submit",
-                    type: "POST",
-                    async: true,
-                    contentType: "application/json",
-                    data: jsonString,
-                    dataType: "json"
-                });
-
-                console.log("[FormJSON]\n" + jsonString);
-                $("#debug").val(jsonString);
-            });
-
-            /*
-            // ファイルが読み込まれた時に実行
-            elemPhoto.onchange = async (event) => {
-                const thumbnail = document.querySelector("#thumbnail");
-                const file = event.target.files[0];
-                const reader = new FileReader();
-
-                reader.onload = (function (file) {
-                    return function (e) {
-
+            <div class="col-5 mb-3">
+                <label for="userNameInput" class="form-label"><b>名前</b></label>
+                <input type="text" class="form-control" id="userNameInput">
+            </div>
+        
+            <div class="col-2 mb-3">
+                <label for="latitudeInput">
+                    <span class="required">*</span>
+                    <span><b>緯度</b></span> <br>
+                </label>
+                <input size="5" type="number" class="form-control" id ="latitudeInput" min="-90.0" max="90.0" step="0.0000001" required>
+            </div>
+        
+            <div class="col-2 mb-3">
+                <label for="longitudeInput">
+                    <span class="required">*</span>
+                    <span><b>経度</b></span> <br>
+                </label>
+                <input type="number" class="form-control" id ="longitudeInput" min="-180.0" max="180.0" step="0.0000001" required>
+            </div>
+        
+            <div class="col-2 mb-3">
+                <button id="getLocation" class="btn btn-secondary">現在位置を取得</button>
+            </div>
+        
+            <div class="col-5 mb-3">
+                <label for="photoInput">
+                    <span class="required">*</span>
+                    <span><b>自動販売機の写真</b></span>
+                </label>
+                <input type="file" class="form-control" id="photoInput" accept="image/*" required>
+        
+                <img id="thumbnail" class="img-thumbnail" alt="サムネイル" src="" hidden>
+            </div>
+        
+            <div class="col-2 mb-3">
+                <button id="sendForm" class="btn btn-success" disabled>送信</button>
+            </div>
+        
+            <div class="col-4 mb-3">
+                <label for="debug"><span><b>デバッグ用</b></span></label>
+                <textarea id="debug" class="form-control" rows="15" cols="60"></textarea>
+            </div>
+        
+            <script type="module">
+                $(function () {
+                    // 要素
+                    const elemUserName = $("#userNameInput");
+                    const elemLatitude = $("#latitudeInput");
+                    const elemLongitude = $("#longitudeInput");
+                    const elemPhoto = $("#photoInput");
+                    const elemSendForm = $("#sendForm");
+        
+                    elemPhoto.on("change", checkEmpty);
+                    elemLatitude.on("input", checkEmpty);
+                    elemLongitude.on("input", checkEmpty);
+        
+                    // 入力必須な項目が空かどうかを判定する
+                    function checkEmpty() {
+                        const b1 = elemLatitude.val().length > 0;
+                        const b2 = elemLongitude.val().length > 0;
+                        const b3 = elemPhoto.prop("files").length > 0;
+        
+                        elemSendForm.prop("disabled", !(b1 && b2 && b3));
+                    }
+        
+                    // 「現在位置を取得」ボタンを押すと実行される
+                    $("#getLocation").on("click", function () {
+                        const options = {
+                            enableHighAccuracy: true,
+                            timeout: 5000,
+                            maximumAge: 0
+                        };
+        
+                        function success(pos) {
+                            const coords = pos.coords;
+                            document.querySelector("#latitudeInput").value = coords.latitude;
+                            document.querySelector("#longitudeInput").value = coords.longitude;
+                        }
+        
+                        function error(err) {
+                            const msg = "位置情報の取得に失敗しました\n" + `Error Code: ${err.code}\n` + `${err.message}`
+                            alert(msg);
+                        }
+        
+                        navigator.geolocation.getCurrentPosition(success, error, options);
+        
+                        checkEmpty();
+                    });
+        
+                    // 「送信」ボタンを押すと実行される
+                    elemSendForm.on("click", function () {
+                        // 要素
+                        const userName = $("#userNameInput").val();
+                        const latitude = $("#latitudeInput").val();
+                        const longitude = $("#longitudeInput").val();
+                        const photo = $("#photoInput").prop("files")[0];
+        
+                        /*
+                        const response = fetch("/submit", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({userName, latitude, longitude, photo})
+                        });
+        
+                        if (response.status / 100 !== 2) {
+                            console.log(response);
+                            return;
+                        }
+                        */
+        
+                        const jsonString = JSON.stringify({userName, latitude, longitude, photo});
+                        $.ajax({
+                            url: "/submit",
+                            type: "POST",
+                            async: true,
+                            contentType: "application/json",
+                            data: jsonString,
+                            dataType: "json"
+                        });
+        
+                        console.log("[FormJSON]\n" + jsonString);
+                        $("#debug").val(jsonString);
+                    });
+        
+                    /*
+                    // ファイルが読み込まれた時に実行
+                    elemPhoto.onchange = async (event) => {
+                        const thumbnail = document.querySelector("#thumbnail");
+                        const file = event.target.files[0];
+                        const reader = new FileReader();
+        
+                        reader.onload = (function (file) {
+                            return function (e) {
+        
+                            };
+                        });
                     };
+        
+                     */
                 });
-            };
+            </script>
+        
+            <script src="js/bootstrap.min.js"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        </nav>
+        <div id="map"></div>
 
-             */
-        });
-    </script>
+        <div id="main">
+            <p>ピンの情報</p>
+            <div id = "idName"></div>
+            <div id = "lat"></div>
+            <div id = "lng"></div>
+            <div id = "date"></div>
+            <div id = "photo"></div>
+        </div>
+    
+    <script type="module">
+        // 地図を作成する
+        var mymap = L.map('map');
+         
+         // タイルレイヤーを作成し、地図にセットする
+         L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
+           maxZoom: 18,
+           attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">国土地理院</a>',
+         }).addTo(mymap);
+         var popup2 = L.popup().setContent("マップピンです");
+         // 地図の中心座標とズームレベルを設定する
+         mymap.setView([34.4822647, 135.8242605], 10);
+         L.marker([34.4822647, 135.8242605]).bindPopup(popup2).bindTooltip("マップピン").addTo(mymap);
+
+         //仮のデータ
+         var markers=[];
+                     //緯度      //経度     //ユーザーID        //画像のURL
+         markers[0]=[34.2822647,135.2242605,"山田",7,"https://cdn.pixabay.com/photo/2022/07/29/18/11/city-7352352__480.jpg"]//フリー素材のURL
+         markers[1]=[34.0822647,135.0242605,"田中",4,"https://cdn.pixabay.com/photo/2022/07/29/18/11/city-7352352__480.jpg"]//フリー素材のURL
+         //マーカー生成
+         var marker_cnt = markers.length;
+				for(var i=0; i<marker_cnt; i++){
+                    SetMarker(markers[i][0],markers[i][1],markers[i][2],markers[i][3],markers[i][4]);
+				}
+
+                function SetMarker(lat, lng, user_id, date, photo){
+                    console.log('ピン生成');
+                    markers[i]=L.marker([lat,lng]).addTo(mymap).on( 'click', function(e) {  clickEvt(e); });
+                    markers[i].user = user_id;
+                    markers[i].date = date;
+                    markers[i].lat = lat;
+                    markers[i].lng = lng;
+                    markers[i].photo = photo;
+                }
+                //マーカークリック
+                function clickEvt(e){
+                    console.log(e.target.user, e.target.date);
+                    document.getElementById("idName").innerHTML = "ユーザー:"+e.target.user;
+                    // elem.innerHTML = "<span style='color: red;'>span要素に変更したよ！</span>";
+                    document.getElementById("lat").innerHTML = "緯度"+e.target.lat;
+                    document.getElementById("lng").innerHTML = "経度"+e.target.lng;
+                    document.getElementById("date").innerHTML = "日時:"+e.target.date;
+                    var photo=e.target.photo;
+                    document.getElementById("photo").innerHTML = "<img src=\"" + photo + "\" class='photo' alt='自販機' title='自販機'>";
+
+                    
+                }
+
+        </script>
+
 
     <script src="js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 
-</html>
