@@ -179,10 +179,10 @@
            maxZoom: 18,
            attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">国土地理院</a>',
          }).addTo(mymap);
-         var popup2 = L.popup().setContent("マップピンです");
+        //  var popup2 = L.popup().setContent("マップピンです");
          // 地図の中心座標とズームレベルを設定する
          mymap.setView([34.4822647, 135.8242605], 10);
-         L.marker([34.4822647, 135.8242605]).bindPopup(popup2).bindTooltip("マップピン").addTo(mymap);
+        //  L.marker([34.4822647, 135.8242605]).bindPopup(popup2).bindTooltip("マップピン").addTo(mymap);
 
          //仮のデータ
          var markers=[];
