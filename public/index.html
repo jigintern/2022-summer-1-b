@@ -161,6 +161,7 @@
             // 「送信」ボタンを押すと実行される
             elemSendForm.on("click", function () {
                 // 要素
+                let id = 0;
                 const user_id = $("#userNameInput").val();
                 const lat = $("#latitudeInput").val();
                 const long = $("#longitudeInput").val();
@@ -168,31 +169,27 @@
                 const formatted = new Date().toISOString();
                 const date = formatted.split(".")[0];
 
-                /*
-                const response = fetch("/posts", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({userName, latitude, longitude, photo})
-                });
-
-                if (response.status / 100 !== 2) {
-                    console.log(response);
-                    return;
-                }
-                */
-
-                const jsonString = JSON.stringify({user_id, lat, long, photo, date});
                 $.ajax({
                     url: "/posts",
-                    type: "POST",
-                    async: true,
-                    contentType: "application/json",
-                    data: jsonString,
-                    dataType: "json"
-                });
+                    type: "GET",
+                    async: true
+                }).done(function (msg) {
+                    const tmp = JSON.stringify(msg);
+                    const json = JSON.parse(tmp);
+                    id = json.length + 1;
 
-                console.log("[FormJSON]\n" + jsonString);
-                $("#debug").val(jsonString);
+                    const jsonString = JSON.stringify({id, user_id, lat, long, photo, date});
+                    $.ajax({
+                        url: "/posts",
+                        type: "POST",
+                        async: true,
+                        contentType: "application/json",
+                        data: jsonString,
+                        dataType: "json"
+                    });
+
+                    $("#debug").val(jsonString);
+                });
             });
         });
     </script>

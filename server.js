@@ -66,6 +66,7 @@ serve(async (req) => {
 
         case "POST": {
           const json = await req.json();
+          const id = json.id;
           const user_id = json.user_id;
           const lat = json.lat;
           const long = json.long;
@@ -78,7 +79,7 @@ serve(async (req) => {
           }
 
           await connection.queryObject`
-            INSERT INTO posts VALUES (${user_id}, ${lat}, ${long}, ${photo}, ${date});
+            INSERT INTO posts VALUES (${id}, ${user_id}, ${lat}, ${long}, ${photo}, ${date});
           `;
 
           return new Response("Created", { status: 201 });
