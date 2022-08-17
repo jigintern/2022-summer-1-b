@@ -1,7 +1,6 @@
 body {
     background: #c1deb8;
 }
-
 .required {
     color: red;
     font-weight: bold;
@@ -33,4 +32,7 @@ body {
         float: left;
         
         }
-
+.photo{
+    width:300px;
+    height:auto;
+}

@@ -10,8 +10,6 @@
 </head>
 
 <body>
-    
-    <div id="content">
         <nav>
             <h1>登録フォーム</h1>
 
@@ -169,6 +167,7 @@
             <div id = "lat"></div>
             <div id = "lng"></div>
             <div id = "date"></div>
+            <div id = "photo"></div>
         </div>
     
     <script type="module">
@@ -187,21 +186,23 @@
 
          //仮のデータ
          var markers=[];
-         markers[0]=[34.2822647,135.2242605,"山田",7]
-         markers[1]=[34.0822647,135.0242605,"田中",4]
+                     //緯度      //経度     //ユーザーID        //画像のURL
+         markers[0]=[34.2822647,135.2242605,"山田",7,"https://cdn.pixabay.com/photo/2022/07/29/18/11/city-7352352__480.jpg"]//フリー素材のURL
+         markers[1]=[34.0822647,135.0242605,"田中",4,"https://cdn.pixabay.com/photo/2022/07/29/18/11/city-7352352__480.jpg"]//フリー素材のURL
          //マーカー生成
          var marker_cnt = markers.length;
 				for(var i=0; i<marker_cnt; i++){
-                    SetMarker(markers[i][0],markers[i][1],markers[i][2],markers[i][3]);
+                    SetMarker(markers[i][0],markers[i][1],markers[i][2],markers[i][3],markers[i][4]);
 				}
 
-                function SetMarker(lat, lng, user_id, date){
+                function SetMarker(lat, lng, user_id, date, photo){
                     console.log('ピン生成');
                     markers[i]=L.marker([lat,lng]).addTo(mymap).on( 'click', function(e) {  clickEvt(e); });
                     markers[i].user = user_id;
                     markers[i].date = date;
                     markers[i].lat = lat;
                     markers[i].lng = lng;
+                    markers[i].photo = photo;
                 }
                 //マーカークリック
                 function clickEvt(e){
@@ -211,6 +212,10 @@
                     document.getElementById("lat").innerHTML = "緯度"+e.target.lat;
                     document.getElementById("lng").innerHTML = "経度"+e.target.lng;
                     document.getElementById("date").innerHTML = "日時:"+e.target.date;
+                    var photo=e.target.photo;
+                    document.getElementById("photo").innerHTML = "<img src=\"" + photo + "\" class='photo' alt='自販機' title='自販機'>";
+
+                    
                 }
 
         </script>
