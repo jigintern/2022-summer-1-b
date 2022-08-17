@@ -95,6 +95,7 @@
                     const coords = pos.coords;
                     document.querySelector("#latitudeInput").value = coords.latitude;
                     document.querySelector("#longitudeInput").value = coords.longitude;
+                    mymap.setView([coords.latitude, coords.longitude], 17);
                 }
 
                 function error(err) {
@@ -115,19 +116,6 @@
                 const longitude = $("#longitudeInput").val();
                 const photo = $("#photoInput").prop("files")[0];
 
-                /*
-                const response = fetch("/submit", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({userName, latitude, longitude, photo})
-                });
-
-                if (response.status / 100 !== 2) {
-                    console.log(response);
-                    return;
-                }
-                */
-
                 const jsonString = JSON.stringify({userName, latitude, longitude, photo});
                 $.ajax({
                     url: "/submit",
@@ -142,21 +130,22 @@
                 $("#debug").val(jsonString);
             });
 
-            /*
-            // ファイルが読み込まれた時に実行
-            elemPhoto.onchange = async (event) => {
-                const thumbnail = document.querySelector("#thumbnail");
-                const file = event.target.files[0];
-                const reader = new FileReader();
-
-                reader.onload = (function (file) {
-                    return function (e) {
-
-                    };
-                });
-            };
-
-             */
+          var testList = [
+            {
+              "user_id": "hoge-hoge",
+              "lat": "35",
+              "long": "135",
+              "photo": "codimg.png",
+              "date": "1/1"
+            },
+            {
+              "user_id": "huge-huge",
+              "lat": "35.710049612769694",
+              "long": "139.81072185539296",
+              "photo": "https://tderfuecifzjrpfwsplc.supabase.co/storage/v1/object/public/hogehoge/test.jpeg",
+              "date": "12/31"
+            }
+          ];
 
           var mymap = L.map('map');
           // タイルレイヤーを作成し、地図にセットする
@@ -164,11 +153,16 @@
             maxZoom: 18,
             attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">国土地理院</a>',
           }).addTo(mymap);
-          var popup2 = L.popup().setContent("マップピンです");
+                //markerListの設定でマーカーを追加
+          for (var num in testList) {
+            var test = testList[num];
+            var content = "<img src= "+ test.photo +" width='300' height='flex'>"
+            var popup = L.popup({maxWidth:350}).setContent(content);
+            L.marker([test.lat, test.long], { title: test.user_id }).bindPopup(popup).addTo(mymap);
+          }
           // 地図の中心座標とズームレベルを設定する
-          mymap.setView([34.4822647, 135.8242605], 10);
-          //  L.marker([34.4822647, 136.8242605],{title:"桜区役所"}).addTo(mymap);
-          L.marker([34.4822647, 135.8242605]).bindPopup(popup2).bindTooltip("マップピン").addTo(mymap);
+          mymap.setView([35.943306, 136.200500], 17);
+
         });
     </script>
 
