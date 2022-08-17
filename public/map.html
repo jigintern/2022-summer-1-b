@@ -165,7 +165,10 @@
 
         <div id="main">
             <p>ピンの情報</p>
-            <div id = "idName"></div>
+            <div class = "shosai" id = "idName"></div>
+            <div class = "shosai" id = "lat"></div>
+            <div class = "shosai" id = "lng"></div>
+            <div class = "shosai" id = "date"></div>
         </div>
     
     <script type="module">
@@ -182,28 +185,33 @@
          mymap.setView([34.4822647, 135.8242605], 10);
          L.marker([34.4822647, 135.8242605]).bindPopup(popup2).bindTooltip("マップピン").addTo(mymap);
 
-
+         //仮のデータ
          var markers=[];
-         markers[0]=[34.2822647,135.2242605,5,7]
-         markers[1]=[34.0822647,135.0242605,3,4]
-
+         markers[0]=[34.2822647,135.2242605,"山田",7]
+         markers[1]=[34.0822647,135.0242605,"田中",4]
+         //マーカー生成
          var marker_cnt = markers.length;
 				for(var i=0; i<marker_cnt; i++){
 					// SetMarker(parseFloat(markers[i]['lat']), parseFloat(markers[i]['lng']),markers[i]['user_id'],markers[i]['photo'],merkers[i]['date']);
                     SetMarker(markers[i][0],markers[i][1],markers[i][2],markers[i][3]);
 				}
-        //マーカー生成
-        // SetMarker(34.2822647,135.2242605,13, 8/16)
+                
                 function SetMarker(lat, lng, user_id, date){
                     console.log('ピン生成');
                     markers[i]=L.marker([lat,lng]).addTo(mymap).on( 'click', function(e) {  clickEvt(e); });
                     markers[i].user = user_id;
                     markers[i].date = date;
+                    markers[i].lat = lat;
+                    markers[i].lng = lng;
                 }
                 //マーカークリック
                 function clickEvt(e){
                     console.log(e.target.user, e.target.date);
-                    document.getElementById("idName").innerHTML = "ユーザーid:"+e.target.user +"日時:"+e.target.date;
+                    document.getElementById("idName").innerHTML = "ユーザー:"+e.target.user;
+                    // elem.innerHTML = "<span style='color: red;'>span要素に変更したよ！</span>";
+                    document.getElementById("lat").innerHTML = "緯度"+e.target.lat;
+                    document.getElementById("lng").innerHTML = "経度"+e.target.lng;
+                    document.getElementById("date").innerHTML = "日時:"+e.target.date;
                 }
 
         </script>
