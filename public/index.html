@@ -12,8 +12,8 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="/index.html">Vending Machine Searcher(仮)</a>
         </div>
-        <button id="signUp" class="col-1 me-3 btn btn-outline-secondary" type="button">サインアップ</button>
-        <a id="signIn" href="/signin.html" class="col-1">サインイン</a>
+        <button id="signUp" class="col-2 me-3 btn btn-outline-secondary" type="button">サインアップ</button>
+        <a id="signIn" href="/signin.html" class="col-2" style="text-align: center">サインイン</a>
     </nav>
 
     <h1>テスト入力フォーム</h1>
@@ -83,10 +83,46 @@
             elemLatitude.on("input", checkEmpty);
             elemLongitude.on("input", checkEmpty);
 
+            // Cookie からユーザーIDを取得
+            const array = document.cookie.split(";");
+            let user_id = "";
+            for (const c of array) {
+                const split = c.split("=");
+                const key = split[0];
+                const value = split[1];
+
+                if (key === "user_id") {
+                    user_id = value;
+                    break;
+                }
+            }
+
             // 「サインアップ」ボタンでリダイレクト
-            $("#signUp").on("click", function () {
-                window.location.href = "/signup.html";
+            // 「サインイン」について
+            const signIn = $("#signIn");
+            const signUp = $("#signUp");
+
+            signUp.on("click", function () {
+                if (user_id.length >= 1) {
+                    $.ajax({
+                        url: "/signout",
+                        type: "POST",
+                        async: true
+                    });
+
+                    document.cookie = "user_id=;";
+                    window.location.href = "/index.html";
+                } else {
+                    window.location.href = "/signup.html";
+                }
             });
+
+            if (user_id.length >= 1) {
+                signUp.text("サインアウト");
+                signUp.prop("class", "col-2 me-3 btn btn-outline-danger");
+                signIn.text(user_id + " さん");
+                signIn.removeAttr("href");
+            }
 
             // 入力必須な項目が空かどうかを判定する
             function checkEmpty() {
@@ -157,22 +193,6 @@
                 console.log("[FormJSON]\n" + jsonString);
                 $("#debug").val(jsonString);
             });
-
-            /*
-            // ファイルが読み込まれた時に実行
-            elemPhoto.onchange = async (event) => {
-                const thumbnail = document.querySelector("#thumbnail");
-                const file = event.target.files[0];
-                const reader = new FileReader();
-
-                reader.onload = (function (file) {
-                    return function (e) {
-
-                    };
-                });
-            };
-
-             */
         });
     </script>
 

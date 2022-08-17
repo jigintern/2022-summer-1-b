@@ -95,16 +95,8 @@ serve(async (req) => {
     }
   }
 
-  // サインアップの GET/POST
+  // サインアップの POST
   if (pathName === "/signup") {
-    if (req.method === "GET") {
-      const user = supabase.auth.user();
-
-      const json = JSON.stringify(user);
-
-      return new Response(json);
-    }
-
     if (req.method === "POST") {
       const json = await req.json();
       const email = json.email;
@@ -126,27 +118,29 @@ serve(async (req) => {
     }
   }
 
-  // サインインの GET/POST
+  // サインインの POST
   if (pathName === "/signin") {
-    if (req.method === "GET") {
-      const user = supabase.auth.user();
-
-      const json = JSON.stringify(user);
-
-      return new Response(json);
-    }
-
     if (req.method === "POST") {
       const json = await req.json();
       const email = json.email;
       const password = json.password;
 
-      const { user, session, error } = await supabase.auth.signUp({
+      const { user, session, error } = await supabase.auth.signIn({
         email: email,
         password: password
       });
 
       const response = JSON.stringify({ user, session, error });
+      return new Response(response);
+    }
+  }
+
+  // サインアウトの POST
+  if (pathName === "/signout") {
+    if (req.method === "POST") {
+      const { error } = await supabase.auth.signOut();
+
+      const response = JSON.stringify({ error });
       return new Response(response);
     }
   }

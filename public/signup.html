@@ -164,6 +164,9 @@
                             dataType: "json"
                         });
 
+                        // Cookieに現在のユーザーIDを保存
+                        document.cookie = "user_id=" + user["user_metadata"]["user_id"];
+
                         window.location.href = "/index.html";
                     } else {
                         const ERR = $("#errorMessage");
@@ -172,8 +175,6 @@
                         ERR.text("エラー: " + error["message"]);
                     }
                 });
-
-                console.log("[Signup]\n" + jsonString);
             });
         });
     </script>
