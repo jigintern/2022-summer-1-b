@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="signup.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+    <meta charset="UTF-8">
+
+    <script src="js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <title>サインアップ</title>
+</head>
+
+<body>
+    <h1>サインアップ</h1>
+
+    <div class="mb-3">
+        <span class="required">*</span>
+        <span> は必須項目</span>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <label for="emailInput">
+                <span class="required">*</span>
+                <span> <b>Eメールアドレス</b></span>
+                <i class="bi-mailbox"></i>
+            </label> <br>
+
+            <input type="email" id="emailInput" placeholder="Eメールアドレス" class="form-control">
+        </div>
+
+        <div class="col-1 mb-3">
+            <label for="emailIcon"></label>
+            <button id="emailIcon" class="btn btn-danger form-control" disabled>
+                <i id="emailIconName" class="bi-x"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4 mb-3">
+            <label for="userIDInput">
+                <span class="required">*</span>
+                <span> <b>ユーザーID</b></span>
+                <i class="bi-input-cursor-text"></i>
+            </label> <br>
+            <input type="text" id="userIDInput" placeholder="ユーザーID" class="form-control" pattern="/^[0-9a-zA-Z_]+$/">
+        </div>
+
+        <div class="col-1 mb-3">
+            <label for="userIDIcon"></label>
+            <button id="userIDIcon" class="btn btn-danger form-control" disabled>
+                <i id="userIDIconName" class="bi-x"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4 mb-3">
+            <label for="passwordInput">
+                <span class="required">*</span>
+                <span> <b>パスワード</b></span>
+                <i class="bi-key-fill"></i>
+            </label> <br>
+            <input type="password" id="passwordInput" placeholder="パスワード" class="form-control">
+        </div>
+
+        <div class="col-1 mb-3">
+            <label for="passwordIcon"></label>
+            <button id="passwordIcon" class="btn btn-danger form-control" disabled>
+                <i id="passwordIconName" class="bi-x"></i>
+            </button>
+        </div>
+    </div>
+
+    <p id="errorMessage" class="mb-3" style="color: red; display: none"></p>
+
+    <div class="col-2 mb-3">
+        <button id="createAccount" class="btn btn-primary" disabled>サインアップ</button>
+    </div>
+
+    <!-- HTML制御部分 -->
+    <script type="module">
+        $(function () {
+            const elemEmail = $("#emailInput");
+            const elemUserID = $("#userIDInput");
+            const elemPassword = $("#passwordInput");
+
+            let b1 = false;
+            let b2 = false;
+            let b3 = false;
+
+            elemEmail.on("input", function () {
+                const regex = new RegExp("^[a-zA-Z\\d_.+-]+@([a-zA-Z\\d][a-zA-Z\\d-]*[a-zA-Z\\d]*\\.)+[a-zA-Z]{2,}$");
+
+                const bA = elemEmail.val().length >= 1;
+                const bB = regex.exec(elemEmail.val()) != null;
+
+                b1 = (bA && bB);
+
+                $("#emailIcon").prop("class", b1 ? "btn btn-success form-control" : "btn btn-danger form-control");
+                $("#emailIconName").prop("class", b1 ? "bi-check-circle-fill" : "bi-x");
+
+                $("#createAccount").prop("disabled", !(b1 && b2 && b3));
+            });
+
+            elemUserID.on("input", function () {
+                const regex = new RegExp("^[a-zA-Z\\d_-]+$");
+
+                const bA = elemUserID.val().length >= 3;
+                const bB = regex.exec(elemUserID.val());
+
+                b2 = bA && bB;
+
+                $("#userIDIcon").prop("class", b2 ? "btn btn-success form-control" : "btn btn-danger form-control");
+                $("#userIDIconName").prop("class", b2 ? "bi-check-circle-fill" : "bi-x");
+
+                $("#createAccount").prop("disabled", !(b1 && b2 && b3));
+            });
+
+            elemPassword.on("input", function () {
+                b3 = elemPassword.val().length >= 6;
+
+                $("#passwordIcon").prop("class", b3 ? "btn btn-success form-control" : "btn btn-danger form-control");
+                $("#passwordIconName").prop("class", b3 ? "bi-check-circle-fill" : "bi-x");
+
+                $("#createAccount").prop("disabled", !(b1 && b2 && b3));
+            });
+
+            $("#createAccount").on("click", function () {
+                const email = $("#emailInput").val();
+                const user_id = $("#userIDInput").val();
+                const password = $("#passwordInput").val();
+
+                const jsonString = JSON.stringify({email, user_id, password});
+                $.ajax({
+                    url: "/signup",
+                    type: "POST",
+                    async: true,
+                    contentType: "application/json",
+                    data: jsonString,
+                    dataType: "json"
+                }).done(function(msg) {
+                    let jsonString = JSON.stringify(msg);
+                    const json = JSON.parse(jsonString);
+
+                    const user = json["user"];
+                    const session = json["session"];
+                    const error = json["error"];
+
+                    console.log("[JSON]: " + jsonString)
+
+                    if (error === null) {
+                        jsonString = JSON.stringify({email, password});
+
+                        $.ajax({
+                            url: "/signin",
+                            type: "POST",
+                            async: true,
+                            contentType: "application/json",
+                            data: jsonString,
+                            dataType: "json"
+                        });
+
+                        // Cookieに現在のユーザーIDを保存
+                        document.cookie = "user_id=" + user["user_metadata"]["user_id"];
+
+                        window.location.href = "/index.html";
+                    } else {
+                        const ERR = $("#errorMessage");
+
+                        ERR.prop("style", "color: red; display: inline");
+                        ERR.text("エラー: " + error["message"]);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

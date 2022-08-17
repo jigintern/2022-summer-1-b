@@ -1,8 +1,8 @@
 import { serve } from "https://deno.land/std@0.140.0/http/server.ts";
 import { serveDir } from "https://deno.land/std@0.138.0/http/file_server.ts";
 import * as postgres from "https://deno.land/x/postgres@v0.14.0/mod.ts";
-import { decode } from "https://deno.land/std@0.152.0/encoding/base64.ts";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import { decode } from "https://deno.land/std@0.152.0/encoding/base64.ts";
 
 // 変数宣言
 let formJson = JSON.stringify({});
@@ -10,16 +10,10 @@ let formJson = JSON.stringify({});
 // 接続確認用
 console.log("Listening on http://localhost:8000");
 
-// データベースに接続するためのURL?
-const databaseUrl = "postgres://postgres:jigintern2022@db.tderfuecifzjrpfwsplc.supabase.co:6543/postgres";
-
-// 接続
-const pool = new postgres.Pool(databaseUrl, 3, true);
-
-const client = createClient(
-  'https://tderfuecifzjrpfwsplc.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZXJmdWVjaWZ6anJwZndzcGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjA2MTA4MDgsImV4cCI6MTk3NjE4NjgwOH0.lP8Fxlyofo36Lfki_jsdejFZyPI-H3F4XOPXo8dABVw'
-)
+// supabase
+const SUPABASE_URL = "https://tderfuecifzjrpfwsplc.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZXJmdWVjaWZ6anJwZndzcGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjA2MTA4MDgsImV4cCI6MTk3NjE4NjgwOH0.lP8Fxlyofo36Lfki_jsdejFZyPI-H3F4XOPXo8dABVw";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 serve(async (req) => {
   const pathName = new URL(req.url).pathname;
@@ -48,12 +42,14 @@ serve(async (req) => {
       return new Response(result);
     }
      */
-  
 
-
+  // 自動販売機の情報の GET/POST
   if (pathName === "/posts") {
+    // データベースに接続するためのURL?
+    const databaseUrl = "postgres://postgres:jigintern2022@db.tderfuecifzjrpfwsplc.supabase.co:6543/postgres";
+    // 接続
+    const pool = new postgres.Pool(databaseUrl, 3, true);
     const connection = await pool.connect();
-    
 
     try {
       switch (req.method) {
@@ -62,7 +58,7 @@ serve(async (req) => {
                     SELECT * FROM posts
                 `;
 
-          const body = JSON.stringify(result.rows, null, 5);
+          const body = JSON.stringify(result.rows, null, 4);
 
           return new Response(body, {
             headers: { "Content-Type": "application/json" }
@@ -71,12 +67,12 @@ serve(async (req) => {
 
         case "POST": {
           const json = await req.json();
+          const id = json.id;
           const user_id = json.user_id;
           const lat = json.lat;
           const long = json.long;
           const photo = json.photo;
           const date = json.date;
-          const id = 1;
 
           // 入力必須が空の場合は400を返す
           if (lat.length < 1 || long.length < 1 || photo.length < 1 || date.length < 1) {
@@ -84,7 +80,7 @@ serve(async (req) => {
           }
 
           await connection.queryObject`
-            INSERT INTO posts VALUES (${id},${user_id}, ${lat}, ${long}, ${photo}, ${date});
+            INSERT INTO posts VALUES (${id}, ${user_id}, ${lat}, ${long}, ${photo}, ${date});
           `;
 
           return new Response("Created", { status: 201 });
@@ -101,21 +97,67 @@ serve(async (req) => {
     }
   }
 
+  // サインアップの POST
+  if (pathName === "/signup") {
+    if (req.method === "POST") {
+      const json = await req.json();
+      const email = json.email;
+      const user_id = json.user_id;
+      const password = json.password;
+
+      const { user, session, error } = await supabase.auth.signUp({
+        email: email,
+        password: password
+      },
+  {
+        data: {
+          user_id: user_id
+        }
+      });
+
+      const response = JSON.stringify({ user, session, error });
+      return new Response(response);
+    }
+  }
+
+  // サインインの POST
+  if (pathName === "/signin") {
+    if (req.method === "POST") {
+      const json = await req.json();
+      const email = json.email;
+      const password = json.password;
+
+      const { user, session, error } = await supabase.auth.signIn({
+        email: email,
+        password: password
+      });
+
+      const response = JSON.stringify({ user, session, error });
+      return new Response(response);
+    }
+  }
+
   if(pathName === "/posts/image" && req.method === 'POST'){
     
     const json = await req.json();
-
-
-    const get_data = await client.from('posts').select("id");
-    console.log(get_data.data.length);
 
     //画像をsupabasenに送信
     const buffer = decode(json.file.replace(/^.*,/, ''));
     // console.log(json.file.replace(/^.*,/, ''))
     const file = new File([buffer], 'test.jpeg', { type: 'image/jpeg' });
-    const { data, e } = await client.storage.from("hogehoge").upload('test.jpeg', file, { contentType: 'image/jpeg' });
+    const { data, e } = await supabase.storage.from("hogehoge").upload('test.jpeg', file, { contentType: 'image/jpeg' });
 
     return new Response("ok");
+  }
+
+  // サインアウトの POST
+  if (pathName === "/signout") {
+    if (req.method === "POST") {
+      const { error } = await supabase.auth.signOut();
+
+      const response = JSON.stringify({ error });
+      return new Response(response);
+    }
   }
 
   return serveDir(req, {

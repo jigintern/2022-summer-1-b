@@ -8,6 +8,14 @@
 </head>
 
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/index.html">Vending Machine Searcher(仮)</a>
+        </div>
+        <button id="signUp" class="col-2 me-3 btn btn-outline-secondary" type="button">サインアップ</button>
+        <a id="signIn" href="/signin.html" class="col-2" style="text-align: center">サインイン</a>
+    </nav>
+
     <h1>テスト入力フォーム</h1>
 
     <div class="col-5 mb-3">
@@ -63,7 +71,6 @@
             });
         }
 
-
         $(function () {
             // 要素
             const elemUserName = $("#userNameInput");
@@ -76,7 +83,48 @@
             elemLatitude.on("input", checkEmpty);
             elemLongitude.on("input", checkEmpty);
 
-            
+            // Cookie からユーザーIDを取得
+            const array = document.cookie.split(";");
+            let user_id = "";
+            for (const c of array) {
+                const split = c.split("=");
+                const key = split[0];
+                const value = split[1];
+
+                if (key === "user_id") {
+                    user_id = value;
+                    break;
+                }
+            }
+
+            // 「サインアップ」ボタンでリダイレクト
+            // 「サインイン」について
+            const signIn = $("#signIn");
+            const signUp = $("#signUp");
+
+            signUp.on("click", function () {
+                if (user_id.length >= 1) {
+                    $.ajax({
+                        url: "/signout",
+                        type: "POST",
+                        async: true
+                    });
+
+                    document.cookie = "user_id=;";
+                    window.location.href = "/index.html";
+                } else {
+                    window.location.href = "/signup.html";
+                }
+            });
+
+            if (user_id.length >= 1) {
+                signUp.text("サインアウト");
+                signUp.prop("class", "col-2 me-3 btn btn-outline-danger");
+                signIn.text(user_id + " さん");
+                signIn.removeAttr("href");
+                elemUserName.val(user_id);
+            }
+
             // 入力必須な項目が空かどうかを判定する
             function checkEmpty() {
                 const b1 = elemLatitude.val().length > 0;
@@ -113,6 +161,7 @@
             // 「送信」ボタンを押すと実行される
             elemSendForm.on("click", function () {
                 // 要素
+                let id = 0;
                 const user_id = $("#userNameInput").val();
                 const lat = $("#latitudeInput").val();
                 const long = $("#longitudeInput").val();
@@ -120,48 +169,28 @@
                 const formatted = new Date().toISOString();
                 const date = formatted.split(".")[0];
 
-                /*
-                const response = fetch("/posts", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({userName, latitude, longitude, photo})
-                });
-
-                if (response.status / 100 !== 2) {
-                    console.log(response);
-                    return;
-                }
-                */
-
-                const jsonString = JSON.stringify({user_id, lat, long, photo, date});
                 $.ajax({
                     url: "/posts",
-                    type: "POST",
-                    async: true,
-                    contentType: "application/json",
-                    data: jsonString,
-                    dataType: "json"
-                });
+                    type: "GET",
+                    async: true
+                }).done(function (msg) {
+                    const tmp = JSON.stringify(msg);
+                    const json = JSON.parse(tmp);
+                    id = json.length + 1;
 
-                console.log("[FormJSON]\n" + jsonString);
-                $("#debug").val(jsonString);
+                    const jsonString = JSON.stringify({id, user_id, lat, long, photo, date});
+                    $.ajax({
+                        url: "/posts",
+                        type: "POST",
+                        async: true,
+                        contentType: "application/json",
+                        data: jsonString,
+                        dataType: "json"
+                    });
+
+                    $("#debug").val(jsonString);
+                });
             });
-
-            /*
-            // ファイルが読み込まれた時に実行
-            elemPhoto.onchange = async (event) => {
-                const thumbnail = document.querySelector("#thumbnail");
-                const file = event.target.files[0];
-                const reader = new FileReader();
-
-                reader.onload = (function (file) {
-                    return function (e) {
-
-                    };
-                });
-            };
-
-             */
         });
     </script>
 
