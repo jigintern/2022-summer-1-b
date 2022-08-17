@@ -165,10 +165,10 @@
 
         <div id="main">
             <p>ピンの情報</p>
-            <div class = "shosai" id = "idName"></div>
-            <div class = "shosai" id = "lat"></div>
-            <div class = "shosai" id = "lng"></div>
-            <div class = "shosai" id = "date"></div>
+            <div id = "idName"></div>
+            <div id = "lat"></div>
+            <div id = "lng"></div>
+            <div id = "date"></div>
         </div>
     
     <script type="module">
@@ -192,10 +192,9 @@
          //マーカー生成
          var marker_cnt = markers.length;
 				for(var i=0; i<marker_cnt; i++){
-					// SetMarker(parseFloat(markers[i]['lat']), parseFloat(markers[i]['lng']),markers[i]['user_id'],markers[i]['photo'],merkers[i]['date']);
                     SetMarker(markers[i][0],markers[i][1],markers[i][2],markers[i][3]);
 				}
-                
+
                 function SetMarker(lat, lng, user_id, date){
                     console.log('ピン生成');
                     markers[i]=L.marker([lat,lng]).addTo(mymap).on( 'click', function(e) {  clickEvt(e); });
