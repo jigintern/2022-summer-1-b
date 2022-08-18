@@ -48,7 +48,7 @@
             <span class="required">*</span>
             <span><b>自動販売機の写真</b></span>
         </label>
-        <input type="file" class="form-control" id="photoInput" accept="image/*" required>
+        <input type="file" class="form-control" id="photoInput" accept="image/*" onchange="postImage(event)" required>
 
         <img id="thumbnail" class="img-thumbnail" alt="サムネイル" src="" hidden>
     </div>
@@ -67,6 +67,13 @@
   </div>
 
     <script type="module">
+      // ランダムなUUIDの生成
+      function randomUUID(){
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(a) {
+            let r = (new Date().getTime() + Math.random() * 16)%16 | 0, v = a === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+      }
         $(function () {
             // 要素
             const elemUserName = $("#userNameInput");
@@ -120,8 +127,10 @@
                 const latitude = $("#latitudeInput").val();
                 const longitude = $("#longitudeInput").val();
                 const photo = $("#photoInput").prop("files")[0];
+                const formatted = new Date().toISOString();
+                const date = formatted.split(".")[0];
 
-                const jsonString = JSON.stringify({userName, latitude, longitude, photo});
+                const jsonString = JSON.stringify({userName, latitude, longitude, photo,date});
                 $.ajax({
                     url: "/submit",
                     type: "POST",
@@ -171,5 +180,23 @@
         });
     </script>
 </body>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  async function postImage(event) {
+    const rawFile = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = async () => {
+      console.log(reader.result);
+      const response = await fetch(
+          "posts/image",
+          {
+              method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ file: reader.result })
+          }
+      );
+    };
+    reader.readAsDataURL(rawFile);
+  } 
+</script>
 
 </html>
