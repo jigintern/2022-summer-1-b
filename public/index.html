@@ -101,7 +101,6 @@
                     document.querySelector("#latitudeInput").value = coords.latitude;
                     document.querySelector("#longitudeInput").value = coords.longitude;
                     mymap.setView([coords.latitude, coords.longitude], 17);
-                    L.marker([coords.latitude, coords.longitude], { title: "新規作成" }).addTo(map);
                 }
 
                 function error(err) {
@@ -135,7 +134,7 @@
                 console.log("[FormJSON]\n" + jsonString);
                 $("#debug").val(jsonString);
             });
-
+          
           var testList = [
             {
               "user_id": "hoge-hoge",
@@ -159,7 +158,8 @@
             maxZoom: 18,
             attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">国土地理院</a>',
           }).addTo(mymap);
-                //markerListの設定でマーカーを追加
+          L.marker([$("#latitudeInput").val(), $("#longitudeInput").val()], { title: "新規作成" , draggable:true }).addTo(mymap);
+          //markerListの設定でマーカーを追加
           for (var num in testList) {
             var test = testList[num];
             var content = "<img src= "+ test.photo +" width='300' height='flex'>"
