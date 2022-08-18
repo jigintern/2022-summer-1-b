@@ -4,14 +4,26 @@ body {
     height: 100vh;
 }
 
+.all-item {
+    flex: 1.0;
+}
+
+.main {
+    display: flex;
+}
+
 .map {
-    flex: 0.7;
+    flex: 0.65;
     overflow-x: hidden;
     scrollbar-width: none;
 }
 
+.navigation {
+    flex: 1.0;
+}
+
 .sidebar {
-    flex: 0.3;
+    flex: 0.35;
     min-width: 250px;
 }
 
