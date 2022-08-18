@@ -149,6 +149,7 @@
         });
 
         let photo = "";
+        let mymap;
 
         // 写真をデータベースにアップロード
         async function postImage(event) {
@@ -303,7 +304,7 @@
             show = request.response;
 
             var markers =[];
-            var mymap = L.map('map');
+            mymap = L.map('map');
             // タイルレイヤーを作成し、地図にセットする
             L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
                 maxZoom: 18,
@@ -313,7 +314,17 @@
             for (var num in show) {
                 var shosai = show[num];
                 console.log(shosai)
-                var content = "<img src= "+ shosai.photo +" width='300' height='flex'>"
+                const content = `
+                    <p>
+                        <i class="bi-pin-map-fill"></i>
+                        <span><b>ピンの詳細</b></span>
+                    </p>
+                    <img src="${shosai.photo}" width='300' height='flex' alt="Posted Image">
+                    <p><b>投稿者:<b> ${shosai.user_id}</p>
+                    <p><b>緯度:<b> ${shosai.lat}</p>
+                    <p><b>経度:<b> ${shosai.long}</p>
+                    <p><b>投稿日時:<b> ${shosai.date}</p>
+                `;
 
                 var popup = L.popup({maxWidth:350}).setContent(content);
                 markers[num]=L.marker([shosai.lat, shosai.long], { title: shosai.user_id }).bindPopup(popup).addTo(mymap).on( 'click', function(e) {  clickEvt(e); });
@@ -337,6 +348,7 @@
 
     });
 
+    /*
     const btn = document.querySelector('.btn-menu');
     const nav = document.querySelector('nav');
     //  メニューボタンを押したら
@@ -348,6 +360,7 @@
             document.all.list.style.display = "none"
         }
     });
+     */
 
 </script>
 </body>
