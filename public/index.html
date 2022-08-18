@@ -60,7 +60,7 @@
                         <span class="required">*</span>
                         <span><b>自動販売機の写真</b></span>
                     </label>
-                    <input type="file" class="form-control" id="photoInput" accept="image/*" onchange="postImage(event)" required>
+                    <input type="file" class="form-control" id="photoInput" accept="image/*" required>
 
                     <img id="thumbnail" class="img-thumbnail" alt="サムネイル" src="" hidden>
                 </div>
@@ -82,14 +82,28 @@
     </div>
 
     <script type="module">
-      // ランダムなUUIDの生成
-      function randomUUID(){
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(a) {
-            let r = (new Date().getTime() + Math.random() * 16)%16 | 0, v = a === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-      }
         $(function () {
+            let photo = "";
+
+            // 写真をデータベースにアップロード
+            async function postImage(event) {
+                const rawFile = event.target.files[0];
+                const reader = new FileReader();
+                reader.onload = async () => {
+                    console.log(reader.result);
+                    const response = await fetch(
+                        "posts/image",
+                        {
+                            method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ file: reader.result })
+                        }
+                    );
+
+                    photo = await response.text();
+                };
+
+                reader.readAsDataURL(rawFile);
+            }
+
             // 要素
             const elemUserName = $("#userNameInput");
             const elemLatitude = $("#latitudeInput");
@@ -97,7 +111,11 @@
             const elemPhoto = $("#photoInput");
             const elemSendForm = $("#sendForm");
 
-            elemPhoto.on("change", checkEmpty);
+            elemPhoto.on("change", function () {
+                checkEmpty();
+                postImage(event);
+            });
+
             elemLatitude.on("input", checkEmpty);
             elemLongitude.on("input", checkEmpty);
 
@@ -185,7 +203,6 @@
                 const user_id = $("#userNameInput").val();
                 const lat = $("#latitudeInput").val();
                 const long = $("#longitudeInput").val();
-                const photo = randomUUID();
                 const formatted = new Date().toISOString();
                 const date = formatted.split(".")[0];
 
@@ -248,22 +265,5 @@
         });
     </script>
 </body>
-
-<script>
-  async function postImage(event) {
-    const rawFile = event.target.files[0];
-    const reader = new FileReader();
-    reader.onload = async () => {
-      console.log(reader.result);
-      const response = await fetch(
-          "posts/image",
-          {
-              method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ file: reader.result })
-          }
-      );
-    };
-    reader.readAsDataURL(rawFile);
-  } 
-</script>
 
 </html>
