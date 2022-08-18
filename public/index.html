@@ -101,6 +101,7 @@
                     document.querySelector("#latitudeInput").value = coords.latitude;
                     document.querySelector("#longitudeInput").value = coords.longitude;
                     mymap.setView([coords.latitude, coords.longitude], 17);
+                    L.marker([coords.latitude, coords.longitude], { title: "新規作成" }).addTo(map);
                 }
 
                 function error(err) {
