@@ -1,8 +1,8 @@
 import { serve } from "https://deno.land/std@0.140.0/http/server.ts";
 import { serveDir } from "https://deno.land/std@0.138.0/http/file_server.ts";
 import * as postgres from "https://deno.land/x/postgres@v0.14.0/mod.ts";
-import { decode } from "https://deno.land/std@0.152.0/encoding/base64.ts";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import { decode } from "https://deno.land/std@0.152.0/encoding/base64.ts";
 
 // 変数宣言
 let formJson = JSON.stringify({});
@@ -17,31 +17,6 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 serve(async (req) => {
   const pathName = new URL(req.url).pathname;
-
-  /*
-    if (req.method === "GET" && pathName === "/posts") {
-      return new Response(formJson, {
-        headers: { "Content-Type": "application/json" }
-      });
-    }
-
-
-    if (req.method === "POST" && pathName === "/posts") {
-      const requestJson = await req.json();
-      const userName = requestJson.userName;
-      const latitude = requestJson.latitude;
-      const longitude = requestJson.longitude;
-      const photo = requestJson.photo;
-
-      const result = JSON.stringify({userName, latitude, longitude, photo});
-
-      console.log("[POSTED]");
-      console.log("result: " + result);
-
-      formJson = result;
-      return new Response(result);
-    }
-     */
 
   // 自動販売機の情報の GET/POST
   if (pathName === "/posts") {
@@ -97,23 +72,6 @@ serve(async (req) => {
     }
   }
 
-  // 写真アップロードの POST
-  if (pathName === "/posts/image" && req.method === 'POST') {
-    const json = await req.json();
-
-    const get_data = await supabase.from('posts').select("id");
-    console.log(get_data.data.length);
-
-    //画像をsupabaseに送信
-    const buffer = decode(json.file.replace(/^.*,/, ''));
-
-    // console.log(json.file.replace(/^.*,/, ''))
-    const file = new File([buffer], 'test.jpeg', { type: 'image/jpeg' });
-    const { data, e } = await supabase.storage.from("hogehoge").upload('test.jpeg', file, { contentType: 'image/jpeg' });
-
-    return new Response("ok");
-  }
-
   // サインアップの POST
   if (pathName === "/signup") {
     if (req.method === "POST") {
@@ -154,11 +112,24 @@ serve(async (req) => {
     }
   }
 
+  if(pathName === "/posts/image" && req.method === 'POST'){
+    
+    const json = await req.json();
+
+    //画像をsupabasenに送信
+    const buffer = decode(json.file.replace(/^.*,/, ''));
+    // console.log(json.file.replace(/^.*,/, ''))
+    const file = new File([buffer], 'test.jpeg', { type: 'image/jpeg' });
+    const { data, e } = await supabase.storage.from("hogehoge").upload('test.jpeg', file, { contentType: 'image/jpeg' });
+
+    return new Response("ok");
+  }
+
   // サインアウトの POST
   if (pathName === "/signout") {
     if (req.method === "POST") {
       const { error } = await supabase.auth.signOut();
-
+      
       const response = JSON.stringify({ error });
       return new Response(response);
     }
