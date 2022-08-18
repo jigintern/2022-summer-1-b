@@ -81,6 +81,24 @@ serve(async (req) => {
     }
   }
 
+  // データベースに写真をアップロードする POST
+  if(pathName === "/posts/image" && req.method === 'POST'){
+    const json = await req.json();
+
+    //画像をsupabaseに送信
+    const tmp = json.file.split(";")[0];
+    const extension = tmp.split("/")[1];
+    const buffer = decode(json.file.replace(/^.*,/, ''));
+    const fileName = uuid + "." + extension;
+
+    console.log(fileName);
+
+    const file = new File([buffer], fileName, { type: "image/" + extension });
+    const { data, e } = await supabase.storage.from("hogehoge").upload(fileName, file, { contentType: "image/" + extension });
+
+    return new Response("https://tderfuecifzjrpfwsplc.supabase.co/storage/v1/object/public/hogehoge/" + fileName, { status: 200 });
+  }
+
   // サインアップの POST
   if (pathName === "/signup") {
     if (req.method === "POST") {
@@ -119,23 +137,6 @@ serve(async (req) => {
       const response = JSON.stringify({ user, session, error });
       return new Response(response);
     }
-  }
-
-  if(pathName === "/posts/image" && req.method === 'POST'){
-    const json = await req.json();
-
-    //画像をsupabaseに送信
-    const tmp = json.file.split(";")[0];
-    const extension = tmp.split("/")[1];
-    const buffer = decode(json.file.replace(/^.*,/, ''));
-    const fileName = uuid + "." + extension;
-
-    console.log(fileName);
-
-    const file = new File([buffer], fileName, { type: "image/" + extension });
-    const { data, e } = await supabase.storage.from("hogehoge").upload(fileName, file, { contentType: "image/" + extension });
-
-    return new Response("https://tderfuecifzjrpfwsplc.supabase.co/storage/v1/object/public/hogehoge/" + fileName, { status: 200 });
   }
 
   // サインアウトの POST

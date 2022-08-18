@@ -1,11 +1,32 @@
 body {
-    background: #c1deb8;
+    background: #e6ece0;
     display:flex;
     height: 100vh;
 }
 
+.navbar-brand{
+    font-size:40px;
+    font-style: oblique;
+}
+
+.form-label{
+    font-size:20px;
+}
+
+.form-title{
+    font-size:20px;
+}
+.main{
+    padding : 40px;
+    
+}
+
 .all-item {
     flex: 1.0;
+}
+
+.fade-in {
+    animation: fade-in 1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
 }
 
 .main {
@@ -13,13 +34,15 @@ body {
 }
 
 .map {
-    flex: 0.65;
+    flex: 0.6;
     overflow-x: hidden;
     scrollbar-width: none;
+    border: 20px solid #76c9d8;
 }
 
 .navigation {
     flex: 1.0;
+    background-image: url(https://www.toptal.com/designers/subtlepatterns/uploads/restaurant.png);
 }
 .shosai{
     position: absolute;
@@ -29,9 +52,11 @@ body {
 }
 
 .sidebar {
-    flex: 0.35;
+    flex: 0.4;
     min-width: 250px;
 }
+
+
 
 .required {
     color: red;
