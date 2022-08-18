@@ -1,0 +1,14 @@
+body {
+    background: #9ededa;
+    margin: 50px;
+}
+
+.required {
+    color: red;
+    font-weight: bold;
+}
+
+.icon {
+    width: 32px;
+    height: 32px;
+}

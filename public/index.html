@@ -15,59 +15,95 @@
 </head>
 
 <body>
-  <div class="sidebar">
-    <h1>テスト入力フォーム</h1>
+    <div class="all-item">
+        <div class="navigation">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="/index.html">Vending Machine Searcher(仮)</a>
+                </div>
+                <button id="signUp" class="col-1 me-3 btn btn-outline-secondary" type="button">サインアップ</button>
+                <a id="signIn" href="/signin.html" class="col-1" style="text-align: center">サインイン</a>
+            </nav>
+        </div>
 
-    <div class="col-5 mb-3">
-        <label for="userNameInput" class="form-label"><b>名前</b></label>
-        <input type="text" class="form-control" id="userNameInput">
+        <div class="main">
+            <div class="sidebar">
+                <h1>テスト入力フォーム</h1>
+
+                <div class="col-10 mb-3">
+                    <label for="userNameInput" class="form-label"><b>名前</b></label>
+                    <input type="text" class="form-control" id="userNameInput">
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label for="latitudeInput">
+                        <span class="required">*</span>
+                        <span><b>緯度</b></span> <br>
+                    </label>
+                    <input type="number" class="form-control" id ="latitudeInput" min="-90.0" max="90.0" step="0.0000001" required>
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label for="longitudeInput">
+                        <span class="required">*</span>
+                        <span><b>経度</b></span> <br>
+                    </label>
+                    <input type="number" class="form-control" id ="longitudeInput" min="-180.0" max="180.0" step="0.0000001" required>
+                </div>
+
+                <div class="col-4 mb-3">
+                    <button id="getLocation" class="btn btn-secondary">現在位置を取得</button>
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label for="photoInput">
+                        <span class="required">*</span>
+                        <span><b>自動販売機の写真</b></span>
+                    </label>
+                    <input type="file" class="form-control" id="photoInput" accept="image/*" required>
+
+                    <img id="thumbnail" class="img-thumbnail" alt="サムネイル" src="" hidden>
+                </div>
+
+                <div class="col-4 mb-3">
+                    <button id="sendForm" class="btn btn-success" disabled>送信</button>
+                </div>
+
+                <div class="col-4 mb-3">
+                    <label for="debug"><span><b>デバッグ用</b></span></label>
+                    <textarea id="debug" class="form-control" rows="15" cols="60"></textarea>
+                </div>
+            </div>
+
+            <div class="map">
+                <div id="map"></div>
+            </div>
+        </div>
     </div>
-
-    <div class="col-2 mb-3">
-        <label for="latitudeInput">
-            <span class="required">*</span>
-            <span><b>緯度</b></span> <br>
-        </label>
-        <input type="number" class="form-control" id ="latitudeInput" min="-90.0" max="90.0" step="0.0000001" required>
-    </div>
-
-    <div class="col-2 mb-3">
-        <label for="longitudeInput">
-            <span class="required">*</span>
-            <span><b>経度</b></span> <br>
-        </label>
-        <input type="number" class="form-control" id ="longitudeInput" min="-180.0" max="180.0" step="0.0000001" required>
-    </div>
-
-    <div class="col-2 mb-3">
-        <button id="getLocation" class="btn btn-secondary">現在位置を取得</button>
-    </div>
-
-    <div class="col-5 mb-3">
-        <label for="photoInput">
-            <span class="required">*</span>
-            <span><b>自動販売機の写真</b></span>
-        </label>
-        <input type="file" class="form-control" id="photoInput" accept="image/*" required>
-
-        <img id="thumbnail" class="img-thumbnail" alt="サムネイル" src="" hidden>
-    </div>
-
-    <div class="col-2 mb-3">
-        <button id="sendForm" class="btn btn-success" disabled>送信</button>
-    </div>
-
-    <div class="col-4 mb-3">
-        <label for="debug"><span><b>デバッグ用</b></span></label>
-        <textarea id="debug" class="form-control" rows="15" cols="60"></textarea>
-    </div>
-  </div>
-  <div class="map">
-    <div id="map"></div>
-  </div>
 
     <script type="module">
         $(function () {
+            let photo = "";
+
+            // 写真をデータベースにアップロード
+            async function postImage(event) {
+                const rawFile = event.target.files[0];
+                const reader = new FileReader();
+                reader.onload = async () => {
+                    console.log(reader.result);
+                    const response = await fetch(
+                        "posts/image",
+                        {
+                            method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ file: reader.result })
+                        }
+                    );
+
+                    photo = await response.text();
+                };
+
+                reader.readAsDataURL(rawFile);
+            }
+
             // 要素
             const elemUserName = $("#userNameInput");
             const elemLatitude = $("#latitudeInput");
@@ -75,9 +111,56 @@
             const elemPhoto = $("#photoInput");
             const elemSendForm = $("#sendForm");
 
-            elemPhoto.on("change", checkEmpty);
+            elemPhoto.on("change", function () {
+                checkEmpty();
+                postImage(event);
+            });
+
             elemLatitude.on("input", checkEmpty);
             elemLongitude.on("input", checkEmpty);
+
+            // Cookie からユーザーIDを取得
+            const array = document.cookie.split(";");
+            let user_id = "";
+            for (const c of array) {
+                const split = c.split("=");
+                const key = split[0];
+                const value = split[1];
+
+                if (key === "user_id") {
+                    user_id = value;
+                    break;
+                }
+            }
+
+            // 「サインイン」について
+            const signIn = $("#signIn");
+            const signUp = $("#signUp");
+
+            // 「サインアップ」ボタンでリダイレクト
+            signUp.on("click", function () {
+                if (user_id.length >= 1) {
+                    $.ajax({
+                        url: "/signout",
+                        type: "POST",
+                        async: true
+                    });
+
+                    document.cookie = "user_id=;";
+                    window.location.href = "/index.html";
+                } else {
+                    window.location.href = "/signup.html";
+                }
+            });
+
+            // サインアップ済みの場合の変更
+            if (user_id.length >= 1) {
+                signUp.text("サインアウト");
+                signUp.prop("class", "col-2 me-3 btn btn-outline-danger");
+                signIn.text(user_id + " さん");
+                signIn.removeAttr("href");
+                elemUserName.val(user_id);
+            }
 
             // 入力必須な項目が空かどうかを判定する
             function checkEmpty() {
@@ -116,23 +199,34 @@
             // 「送信」ボタンを押すと実行される
             elemSendForm.on("click", function () {
                 // 要素
-                const userName = $("#userNameInput").val();
-                const latitude = $("#latitudeInput").val();
-                const longitude = $("#longitudeInput").val();
-                const photo = $("#photoInput").prop("files")[0];
+                let id = 0;
+                const user_id = $("#userNameInput").val();
+                const lat = $("#latitudeInput").val();
+                const long = $("#longitudeInput").val();
+                const formatted = new Date().toISOString();
+                const date = formatted.split(".")[0];
 
-                const jsonString = JSON.stringify({userName, latitude, longitude, photo});
                 $.ajax({
-                    url: "/submit",
-                    type: "POST",
-                    async: true,
-                    contentType: "application/json",
-                    data: jsonString,
-                    dataType: "json"
-                });
+                    url: "/posts",
+                    type: "GET",
+                    async: true
+                }).done(function (msg) {
+                    const tmp = JSON.stringify(msg);
+                    const json = JSON.parse(tmp);
+                    id = json.length + 1;
 
-                console.log("[FormJSON]\n" + jsonString);
-                $("#debug").val(jsonString);
+                    const jsonString = JSON.stringify({id, user_id, lat, long, photo, date});
+                    $.ajax({
+                        url: "/posts",
+                        type: "POST",
+                        async: true,
+                        contentType: "application/json",
+                        data: jsonString,
+                        dataType: "json"
+                    });
+
+                    $("#debug").val(jsonString);
+                });
             });
 
           var testList = [

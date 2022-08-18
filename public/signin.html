@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="signin.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <title>サインイン</title>
+</head>
+
+<body>
+    <h1>サインイン</h1>
+
+    <div class="row mb-3">
+        <div class="col-4">
+            <label for="emailInput">
+                <span class="required">*</span>
+                <span> <b>Eメールアドレス</b></span>
+                <i class="bi-mailbox"></i>
+            </label> <br>
+
+            <input type="email" id="emailInput" placeholder="Eメールアドレス" class="form-control">
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-4 mb-3">
+            <label for="passwordInput">
+                <span class="required">*</span>
+                <span> <b>パスワード</b></span>
+                <i class="bi-key-fill"></i>
+            </label> <br>
+            <input type="password" id="passwordInput" placeholder="パスワード" class="form-control">
+        </div>
+    </div>
+
+    <p id="errorMessage" class="mb-3" style="color: red; display: none"></p>
+
+    <div class="col-2 mb-3">
+        <button id="signIn" class="btn btn-primary" disabled>サインイン</button>
+    </div>
+
+    <!-- HTML制御部分 -->
+    <script type="module">
+        $(function () {
+            const elemEmail = $("#emailInput");
+            const elemPassword = $("#passwordInput");
+
+            let b1 = false;
+            let b2 = false;
+
+            elemEmail.on("input", function () {
+                const regex = new RegExp("^[a-zA-Z\\d_.+-]+@([a-zA-Z\\d][a-zA-Z\\d-]*[a-zA-Z\\d]*\\.)+[a-zA-Z]{2,}$");
+
+                const bA = elemEmail.val().length >= 1;
+                const bB = regex.exec(elemEmail.val()) != null;
+
+                b1 = (bA && bB);
+
+                $("#signIn").prop("disabled", !(b1 && b2));
+            });
+
+            elemPassword.on("input", function () {
+                b2 = elemPassword.val().length >= 6;
+
+                $("#signIn").prop("disabled", !(b1 && b2));
+            });
+
+            $("#signIn").on("click", function () {
+                const email = $("#emailInput").val();
+                const user_id = $("#userIDInput").val();
+                const password = $("#passwordInput").val();
+
+                const jsonString = JSON.stringify({email, password});
+                $.ajax({
+                    url: "/signin",
+                    type: "POST",
+                    async: true,
+                    contentType: "application/json",
+                    data: jsonString,
+                    dataType: "json"
+                }).done(function (msg) {
+                    let jsonString = JSON.stringify(msg);
+                    const json = JSON.parse(jsonString);
+
+                    const user = json["user"];
+                    const session = json["session"];
+                    const error = json["error"];
+
+                    console.log("[JSON]: " + jsonString)
+
+                    if (error === null) {
+                        document.cookie = "user_id=" + user["user_metadata"]["user_id"];
+                        window.location.href = "/index.html";
+                    } else {
+                        const ERR = $("#errorMessage");
+
+                        ERR.prop("style", "color: red; display: inline");
+                        ERR.text("エラー: " + error["message"]);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
