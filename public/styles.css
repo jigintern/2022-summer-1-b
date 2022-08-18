@@ -21,6 +21,12 @@ body {
 .navigation {
     flex: 1.0;
 }
+.shosai{
+    position: absolute;
+    color:blue;
+    top:100%;
+    left:50%;
+}
 
 .sidebar {
     flex: 0.35;
