@@ -66,7 +66,7 @@
                     <img id="thumbnail" class="img-thumbnail" alt="サムネイル" src="" hidden>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-5">
                     <button id="sendForm" class="col-2 me-3 btn btn-success" disabled>送信</button>
 
                     <div id="successMessage" class="col-6 fade-in" style="color: green; display: none">
@@ -75,6 +75,27 @@
                             <span><b>投稿に成功しました</b></span>
                         </p>
                     </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="pinsTable">
+                        <span><i class="bi-chat-left-text-fill"></i></span>
+                        <span><b>投稿一覧</b></span>
+                    </label>
+                    <table id="pinsTable" class="table table-light table-bordered table-striped table-sm col-12">
+                        <thead>
+                        <tr style="text-align: center">
+                            <th scope="col">#</th>
+                            <th scope="col">画像</th>
+                            <th scope="col">ユーザーID</th>
+                            <th scope="col">緯度</th>
+                            <th scope="col">経度</th>
+                            <th scope="col">投稿日時</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -86,6 +107,39 @@
 
     <script type="module">
         $(function () {
+            // 表に要素を追加する
+            $.ajax("/posts", {
+                type: "GET",
+                dataType: "json"
+            }).done(function (data) {
+                const body = $("#tableBody");
+
+                const jsonString = JSON.stringify(data);
+                const json = JSON.parse(jsonString);
+
+                console.log("json.length = " + json.length);
+
+                for (let id = 0; id < json.length; id++) {
+                    const photo = json[id]["photo"];
+                    const user_id = json[id]["user_id"];
+                    const lat = json[id]["lat"];
+                    const long = json[id]["long"];
+                    const date = json[id]["date"];
+
+                    body.append(`
+                        <tr style="text-align: center">
+                            <th scope='row'> ` + (id + 1) + ` </th>
+                            <td><img src="${photo}" style="width: auto; height: auto; max-width: 128px; max-height: 128px" alt="Posted Image"></td>
+                            <td>${user_id}</td>
+                            <td>${lat}</td>
+                            <td>${long}</td>
+                            <td>${date}</td>
+                        </tr>
+                    `);
+                }
+            });
+
+
             let photo = "";
 
             // 写真をデータベースにアップロード
