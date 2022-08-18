@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="jp">
-    
+
 <head>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
@@ -11,130 +11,131 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
 
     <title>テスト入力フォーム</title>
 </head>
 
 <body>
-    <div class="all-item">
-        <div class="navigation">
-            <nav class="navbar navbar-expand-lg navbar-light">
-                <div class="container-fluid">
-                    <a class="navbar-brand" href="/index.html">Vending Machine Searcher</a>
-                </div>
-                <button id="signUp" class="col-1 me-3 btn btn-outline-secondary" type="button">サインアップ</button>
-                <a id="signIn" href="/signin.html" class="col-1" style="text-align: center">サインイン</a>
-            </nav>
-        </div>
+<div class="all-item">
+    <div class="navigation">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/index.html">Vending Machine Searcher</a>
+            </div>
+            <button id="signUp" class="col-1 me-3 btn btn-outline-secondary" type="button">サインアップ</button>
+            <a id="signIn" href="/signin.html" class="col-1" style="text-align: center">サインイン</a>
+        </nav>
+    </div>
 
-        <div class="main">
-            <div class="sidebar">
-                <h1>⛽自販機を登録</h1>
+    <div class="main">
+        <div class="sidebar">
+            <h1>⛽自販機を登録</h1>
 
-                <div class="col-6 mb-3">
-                    <label for="userNameInput" class="form-label"><b>🍹名前</b></label>
-                    <input type="text" class="form-control" id="userNameInput" placeholder="例) タナカ　タロウ">
-                </div>
+            <div class="col-6 mb-3">
+                <label for="userNameInput" class="form-label"><b>🍹名前</b></label>
+                <input type="text" class="form-control" id="userNameInput" placeholder="例) タナカ　タロウ">
+            </div>
 
-                <div class="col-6 mb-3">
-                    <label for="latitudeInput">
-                        <span class="required">*</span>
-                        <span class="form-title"><b>🍸緯度</b></span> <br>
-                    </label>
-                    <input type="number" class="form-control" id ="latitudeInput" min="-90.0" max="90.0" step="0.0000001" placeholder="例) 35.6323207" required>
-                </div>
+            <div class="col-6 mb-3">
+                <label for="latitudeInput">
+                    <span class="required">*</span>
+                    <span class="form-title"><b>🍸緯度</b></span> <br>
+                </label>
+                <input type="number" class="form-control" id ="latitudeInput" min="-90.0" max="90.0" step="0.0000001" placeholder="例) 35.6323207" required>
+            </div>
 
-                <div class="col-6 mb-3">
-                    <label for="longitudeInput">
-                        <span class="required">*</span>
-                        <span class="form-title"><b>🧃経度</b></span> <br>
-                    </label>
-                    <input type="number" class="form-control" id ="longitudeInput" min="-180.0" max="180.0" step="0.0000001" placeholder="例) 139.8789308" required>
-                </div>
+            <div class="col-6 mb-3">
+                <label for="longitudeInput">
+                    <span class="required">*</span>
+                    <span class="form-title"><b>🧃経度</b></span> <br>
+                </label>
+                <input type="number" class="form-control" id ="longitudeInput" min="-180.0" max="180.0" step="0.0000001" placeholder="例) 139.8789308" required>
+            </div>
 
-                <div class="col-4 mb-3">
-                    <button id="getLocation" class="btn btn-secondary">現在位置を取得</button>
-                </div>
+            <div class="col-4 mb-3">
+                <button id="getLocation" class="btn btn-secondary">現在位置を取得</button>
+            </div>
 
-                <div class="col-8 mb-3">
-                    <label for="photoInput">
-                        <span class="required">*</span>
-                        <span class="form-title"><b>📸自動販売機の写真</b></span>
-                    </label>
-                    <input type="file" class="form-control" id="photoInput" accept="image/*" required>
+            <div class="col-8 mb-3">
+                <label for="photoInput">
+                    <span class="required">*</span>
+                    <span class="form-title"><b>📸自動販売機の写真</b></span>
+                </label>
+                <input type="file" class="form-control" id="photoInput" accept="image/*" required>
 
-                    <img id="thumbnail" class="img-thumbnail" alt="サムネイル" src="" hidden>
-                </div>
+                <img id="thumbnail" class="img-thumbnail" alt="サムネイル" src="" hidden>
+            </div>
 
-                <div class="mb-5">
-                    <button id="sendForm" class="col-2 me-3 btn btn-success" disabled>送信</button>
+            <div class="mb-5">
+                <button id="sendForm" class="col-2 me-3 btn btn-success" disabled>送信</button>
 
-                    <div id="successMessage" class="col-6 fade-in" style="color: green; display: none">
-                        <p>
-                            <span><i class="bi-check-circle-fill"></i></span>
-                            <span><b>投稿に成功しました</b></span>
-                        </p>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="pinsTable">
-                        <span><i class="bi-chat-left-text-fill"></i></span>
-                        <span><b>投稿一覧</b></span>
-                    </label>
-                    <table id="pinsTable" class="table table-light table-bordered table-striped table-sm col-12">
-                        <thead>
-                        <tr style="text-align: center">
-                            <th scope="col">#</th>
-                            <th scope="col">画像</th>
-                            <th scope="col">ユーザーID</th>
-                            <th scope="col">緯度</th>
-                            <th scope="col">経度</th>
-                            <th scope="col">投稿日時</th>
-                        </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                        </tbody>
-                    </table>
+                <div id="successMessage" class="col-6 fade-in" style="color: green; display: none">
+                    <p>
+                        <span><i class="bi-check-circle-fill"></i></span>
+                        <span><b>投稿に成功しました</b></span>
+                    </p>
                 </div>
             </div>
 
-            <div class="map">
-                <div id="map"></div>
+            <div class="mb-3">
+                <label for="pinsTable">
+                    <span><i class="bi-chat-left-text-fill"></i></span>
+                    <span><b>投稿一覧</b></span>
+                </label>
+                <table id="pinsTable" class="table table-light table-bordered table-striped table-sm col-12">
+                    <thead>
+                    <tr style="text-align: center">
+                        <th scope="col">#</th>
+                        <th scope="col">画像</th>
+                        <th scope="col">ユーザーID</th>
+                        <th scope="col">緯度</th>
+                        <th scope="col">経度</th>
+                        <th scope="col">投稿日時</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
             </div>
         </div>
- 
- <div class="shosai">
-  <p >ピンの情報</p>
-  <div id ='user'></div>
-  <div id ='lat'></div>
-  <div id ='lng'></div>
-  <div id ='date'></div>
-  </div>
- 
-    <script type="module">
-        $(function () {
-            // 表に要素を追加する
-            $.ajax("/posts", {
-                type: "GET",
-                dataType: "json"
-            }).done(function (data) {
-                const body = $("#tableBody");
 
-                const jsonString = JSON.stringify(data);
-                const json = JSON.parse(jsonString);
+        <div class="map">
+            <div id="map"></div>
+        </div>
+    </div>
 
-                console.log("json.length = " + json.length);
+    <div class="shosai">
+        <p >ピンの情報</p>
+        <div id ='user'></div>
+        <div id ='lat'></div>
+        <div id ='lng'></div>
+        <div id ='date'></div>
+    </div>
+</div>
 
-                for (let id = 0; id < json.length; id++) {
-                    const photo = json[id]["photo"];
-                    const user_id = json[id]["user_id"];
-                    const lat = json[id]["lat"];
-                    const long = json[id]["long"];
-                    const date = json[id]["date"];
+<script type="module">
+    $(function () {
+        // 表に要素を追加する
+        $.ajax("/posts", {
+            type: "GET",
+            dataType: "json"
+        }).done(function (data) {
+            const body = $("#tableBody");
 
-                    body.append(`
+            const jsonString = JSON.stringify(data);
+            const json = JSON.parse(jsonString);
+
+            console.log("json.length = " + json.length);
+
+            for (let id = 0; id < json.length; id++) {
+                const photo = json[id]["photo"];
+                const user_id = json[id]["user_id"];
+                const lat = json[id]["lat"];
+                const long = json[id]["long"];
+                const date = json[id]["date"];
+
+                body.append(`
                         <tr style="text-align: center">
                             <th scope='row'> ` + (id + 1) + ` </th>
                             <td><img src="${photo}" style="width: auto; height: auto; max-width: 128px; max-height: 128px" alt="Posted Image"></td>
@@ -144,165 +145,211 @@
                             <td>${date}</td>
                         </tr>
                     `);
-                }
-            });
+            }
+        });
 
+        let photo = "";
 
-            let photo = "";
+        // 写真をデータベースにアップロード
+        async function postImage(event) {
+            const rawFile = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = async () => {
+                console.log(reader.result);
+                const response = await fetch(
+                    "posts/image",
+                    {
+                        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ file: reader.result })
+                    }
+                );
 
-            // 写真をデータベースにアップロード
-            async function postImage(event) {
-                const rawFile = event.target.files[0];
-                const reader = new FileReader();
-                reader.onload = async () => {
-                    console.log(reader.result);
-                    const response = await fetch(
-                        "posts/image",
-                        {
-                            method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ file: reader.result })
-                        }
-                    );
+                photo = await response.text();
+            };
 
-                    photo = await response.text();
-                };
+            reader.readAsDataURL(rawFile);
+        }
 
-                reader.readAsDataURL(rawFile);
+        // 要素
+        const elemUserName = $("#userNameInput");
+        const elemLatitude = $("#latitudeInput");
+        const elemLongitude = $("#longitudeInput");
+        const elemPhoto = $("#photoInput");
+        const elemSendForm = $("#sendForm");
+
+        elemPhoto.on("change", function () {
+            checkEmpty();
+            postImage(event);
+        });
+
+        elemLatitude.on("input", checkEmpty);
+        elemLongitude.on("input", checkEmpty);
+
+        // Cookie からユーザーIDを取得
+        const array = document.cookie.split(";");
+        let user_id = "";
+        for (const c of array) {
+            const split = c.split("=");
+            const key = split[0];
+            const value = split[1];
+
+            if (key === "user_id") {
+                user_id = value;
+                break;
+            }
+        }
+
+        // 「サインイン」について
+        const signIn = $("#signIn");
+        const signUp = $("#signUp");
+
+        // 「サインアップ」ボタンでリダイレクト
+        signUp.on("click", function () {
+            if (user_id.length >= 1) {
+                $.ajax({
+                    url: "/signout",
+                    type: "POST",
+                    async: true
+                });
+
+                document.cookie = "user_id=;";
+                window.location.href = "/index.html";
+            } else {
+                window.location.href = "/signup.html";
+            }
+        });
+
+        // サインアップ済みの場合の変更
+        if (user_id.length >= 1) {
+            signUp.text("サインアウト");
+            signUp.prop("class", "col-2 me-3 btn btn-outline-danger");
+            signIn.text(user_id + " さん");
+            signIn.removeAttr("href");
+            elemUserName.val(user_id);
+        }
+
+        // 入力必須な項目が空かどうかを判定する
+        function checkEmpty() {
+            const b1 = elemLatitude.val().length > 0;
+            const b2 = elemLongitude.val().length > 0;
+            const b3 = elemPhoto.prop("files").length > 0;
+
+            elemSendForm.prop("disabled", !(b1 && b2 && b3));
+        }
+
+        // 「現在位置を取得」ボタンを押すと実行される
+        $("#getLocation").on("click", function () {
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            };
+
+            function success(pos) {
+                const coords = pos.coords;
+                document.querySelector("#latitudeInput").value = coords.latitude;
+                document.querySelector("#longitudeInput").value = coords.longitude;
+                mymap.setView([coords.latitude, coords.longitude], 17);
             }
 
+            function error(err) {
+                const msg = "位置情報の取得に失敗しました\n" + `Error Code: ${err.code}\n` + `${err.message}`
+                alert(msg);
+            }
+
+            navigator.geolocation.getCurrentPosition(success, error, options);
+
+            checkEmpty();
+        });
+
+        // 「送信」ボタンを押すと実行される
+        elemSendForm.on("click", function () {
             // 要素
-            const elemUserName = $("#userNameInput");
-            const elemLatitude = $("#latitudeInput");
-            const elemLongitude = $("#longitudeInput");
-            const elemPhoto = $("#photoInput");
-            const elemSendForm = $("#sendForm");
+            const userName = $("#userNameInput").val();
+            const latitude = $("#latitudeInput").val();
+            const longitude = $("#longitudeInput").val();
+            const photo = $("#photoInput").prop("files")[0];
 
-            elemPhoto.on("change", checkEmpty);
-            elemLatitude.on("input", checkEmpty);
-            elemLongitude.on("input", checkEmpty);
+            const jsonString = JSON.stringify({userName, latitude, longitude, photo});
+            $.ajax({
+                url: "/posts",
+                type: "GET",
+                async: true
+            }).done(function (msg) {
+                const tmp = JSON.stringify(msg);
+                const json = JSON.parse(tmp);
+                id = json.length + 1;
 
-            // 入力必須な項目が空かどうかを判定する
-            function checkEmpty() {
-                const b1 = elemLatitude.val().length > 0;
-                const b2 = elemLongitude.val().length > 0;
-                const b3 = elemPhoto.prop("files").length > 0;
-
-                elemSendForm.prop("disabled", !(b1 && b2 && b3));
-            }
-
-            // 「現在位置を取得」ボタンを押すと実行される
-            $("#getLocation").on("click", function () {
-                const options = {
-                    enableHighAccuracy: true,
-                    timeout: 5000,
-                    maximumAge: 0
-                };
-
-                function success(pos) {
-                    const coords = pos.coords;
-                    document.querySelector("#latitudeInput").value = coords.latitude;
-                    document.querySelector("#longitudeInput").value = coords.longitude;
-                    mymap.setView([coords.latitude, coords.longitude], 17);
-                }
-
-                function error(err) {
-                    const msg = "位置情報の取得に失敗しました\n" + `Error Code: ${err.code}\n` + `${err.message}`
-                    alert(msg);
-                }
-
-                navigator.geolocation.getCurrentPosition(success, error, options);
-
-                checkEmpty();
-            });
-
-            // 「送信」ボタンを押すと実行される
-            elemSendForm.on("click", function () {
-                // 要素
-                const userName = $("#userNameInput").val();
-                const latitude = $("#latitudeInput").val();
-                const longitude = $("#longitudeInput").val();
-                const photo = $("#photoInput").prop("files")[0];
-
-                const jsonString = JSON.stringify({userName, latitude, longitude, photo});
+                const jsonString = JSON.stringify({id, user_id, lat, long, photo, date});
                 $.ajax({
                     url: "/posts",
-                    type: "GET",
-                    async: true
-                }).done(function (msg) {
-                    const tmp = JSON.stringify(msg);
-                    const json = JSON.parse(tmp);
-                    id = json.length + 1;
-
-                    const jsonString = JSON.stringify({id, user_id, lat, long, photo, date});
-                    $.ajax({
-                        url: "/posts",
-                        type: "POST",
-                        async: true,
-                        contentType: "application/json",
-                        data: jsonString,
-                        dataType: "json"
-                    }).done(function () {
-                        // 投稿が終わったらリロード
-                        location.reload();
-                    });
+                    type: "POST",
+                    async: true,
+                    contentType: "application/json",
+                    data: jsonString,
+                    dataType: "json"
+                }).done(function () {
+                    // 投稿が終わったらリロード
+                    location.reload();
                 });
             });
-            var show=0; 
-            let requestURL = '/posts';
-            let request = new XMLHttpRequest();
-            request.open('GET', requestURL);
-            request.responseType = 'json';
-            request.send();
-            request.onload = function() {
+        });
+        var show=0;
+        let requestURL = '/posts';
+        let request = new XMLHttpRequest();
+        request.open('GET', requestURL);
+        request.responseType = 'json';
+        request.send();
+        request.onload = function() {
             show = request.response;
 
-          var markers =[];
-          var mymap = L.map('map');
-          // タイルレイヤーを作成し、地図にセットする
-          L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-            attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">国土地理院</a>',
-          }).addTo(mymap);
-                //markerListの設定でマーカーを追加
-          for (var num in show) {
-            var shosai = show[num];
-            console.log(shosai)
-            var content = "<img src= "+ shosai.photo +" width='300' height='flex'>"
+            var markers =[];
+            var mymap = L.map('map');
+            // タイルレイヤーを作成し、地図にセットする
+            L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">国土地理院</a>',
+            }).addTo(mymap);
+            //markerListの設定でマーカーを追加
+            for (var num in show) {
+                var shosai = show[num];
+                console.log(shosai)
+                var content = "<img src= "+ shosai.photo +" width='300' height='flex'>"
 
-            var popup = L.popup({maxWidth:350}).setContent(content);
-            markers[num]=L.marker([shosai.lat, shosai.long], { title: shosai.user_id }).bindPopup(popup).addTo(mymap).on( 'click', function(e) {  clickEvt(e); });
-            markers[num].user = shosai.user_id;
-            markers[num].lat = shosai.lat;
-            markers[num].lng = shosai.long;
-            markers[num].date = shosai.date;
-            
-          }
-        
-          // 地図の中心座標とズームレベルを設定する
-          mymap.setView([35.943306, 136.200500], 17);
-        }
-            //マーカークリック
-        function clickEvt(e){
-                document.getElementById("user").innerHTML = "ユーザー:"+e.target.user;
-                document.getElementById("lat").innerHTML = "緯度:"+e.target.lat;
-                document.getElementById("lng").innerHTML = "経度"+e.target.lng;
-                document.getElementById("date").innerHTML = "日時:"+e.target.date;
+                var popup = L.popup({maxWidth:350}).setContent(content);
+                markers[num]=L.marker([shosai.lat, shosai.long], { title: shosai.user_id }).bindPopup(popup).addTo(mymap).on( 'click', function(e) {  clickEvt(e); });
+                markers[num].user = shosai.user_id;
+                markers[num].lat = shosai.lat;
+                markers[num].lng = shosai.long;
+                markers[num].date = shosai.date;
+
             }
 
-        });
+            // 地図の中心座標とズームレベルを設定する
+            mymap.setView([35.943306, 136.200500], 17);
+        }
+        //マーカークリック
+        function clickEvt(e){
+            document.getElementById("user").innerHTML = "ユーザー:"+e.target.user;
+            document.getElementById("lat").innerHTML = "緯度:"+e.target.lat;
+            document.getElementById("lng").innerHTML = "経度"+e.target.lng;
+            document.getElementById("date").innerHTML = "日時:"+e.target.date;
+        }
 
-        const btn = document.querySelector('.btn-menu');
-        const nav = document.querySelector('nav');
-        //  メニューボタンを押したら
-        btn.addEventListener('click', () => {
+    });
+
+    const btn = document.querySelector('.btn-menu');
+    const nav = document.querySelector('nav');
+    //  メニューボタンを押したら
+    btn.addEventListener('click', () => {
         nav.classList.toggle('open-menu')
         if (document.all.list.style.display == "none") {
-		document.all.list.style.display = "block"
-	    } else {
-		document.all.list.style.display = "none"
-	    }
-        });
- 
-    </script>
+            document.all.list.style.display = "block"
+        } else {
+            document.all.list.style.display = "none"
+        }
+    });
+
+</script>
 </body>
 
 </html>
