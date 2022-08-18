@@ -98,13 +98,10 @@
                 </label>
                 <table id="pinsTable" class="table table-light table-bordered table-striped table-sm col-12">
                     <thead>
-                    <tr style="text-align: center">
+                    <tr style="text-align: center; vertical-align: center">
                         <th scope="col">#</th>
                         <th scope="col">画像</th>
                         <th scope="col">ユーザーID</th>
-                        <th scope="col">緯度</th>
-                        <th scope="col">経度</th>
-                        <th scope="col">投稿日時</th>
                     </tr>
                     </thead>
                     <tbody id="tableBody">
@@ -144,18 +141,12 @@
             for (let id = 0; id < json.length; id++) {
                 const photo = json[id]["photo"];
                 const user_id = json[id]["user_id"];
-                const lat = json[id]["lat"];
-                const long = json[id]["long"];
-                const date = json[id]["date"];
 
                 body.append(`
-                        <tr style="text-align: center">
+                        <tr style="text-align: center; vertical-align: center">
                             <th scope='row'> ` + (id + 1) + ` </th>
                             <td><img src="${photo}" style="width: auto; height: auto; max-width: 128px; max-height: 128px" alt="Posted Image"></td>
                             <td>${user_id}</td>
-                            <td>${lat}</td>
-                            <td>${long}</td>
-                            <td>${date}</td>
                         </tr>
                     `);
             }
