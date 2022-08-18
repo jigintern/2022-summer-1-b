@@ -101,6 +101,7 @@
                     document.querySelector("#latitudeInput").value = coords.latitude;
                     document.querySelector("#longitudeInput").value = coords.longitude;
                     mymap.setView([coords.latitude, coords.longitude], 17);
+                    myPin.setLatLng([coords.latitude, coords.longitude])
                 }
 
                 function error(err) {
@@ -158,7 +159,14 @@
             maxZoom: 18,
             attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">国土地理院</a>',
           }).addTo(mymap);
-          L.marker([$("#latitudeInput").val(), $("#longitudeInput").val()], { title: "新規作成" , draggable:true }).addTo(mymap);
+          let myPin = L.marker([$("#latitudeInput").val(), $("#longitudeInput").val()], { title: "新規作成" , draggable:true }).addTo(mymap);
+          myPin.bindPopup(`${myPin.getLatLng().lat}, ${myPin.getLatLng().lng}`)
+          myPin.on('dragend', () => {
+            myPin.bindPopup(`${myPin.getLatLng().lat}, ${myPin.getLatLng().lng}`)
+            document.querySelector("#latitudeInput").value = myPin.getLatLng().lat;
+            document.querySelector("#longitudeInput").value = myPin.getLatLng().lng;
+          });
+
           //markerListの設定でマーカーを追加
           for (var num in testList) {
             var test = testList[num];
@@ -168,6 +176,7 @@
           }
           // 地図の中心座標とズームレベルを設定する
           mymap.setView([35.943306, 136.200500], 17);
+          
 
         });
     </script>
