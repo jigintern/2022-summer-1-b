@@ -68,11 +68,6 @@
                 <div class="col-4 mb-3">
                     <button id="sendForm" class="btn btn-success" disabled>送信</button>
                 </div>
-
-                <div class="col-4 mb-3">
-                    <label for="debug"><span><b>デバッグ用</b></span></label>
-                    <textarea id="debug" class="form-control" rows="15" cols="60"></textarea>
-                </div>
             </div>
 
             <div class="map">
@@ -224,8 +219,6 @@
                         data: jsonString,
                         dataType: "json"
                     });
-
-                    $("#debug").val(jsonString);
                 });
             });
 
