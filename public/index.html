@@ -190,7 +190,7 @@
 
                 const jsonString = JSON.stringify({userName, latitude, longitude, photo,date});
                 $.ajax({
-                    url: "/submit",
+                    url: "/posts",
                     type: "POST",
                     async: true,
                     contentType: "application/json",
