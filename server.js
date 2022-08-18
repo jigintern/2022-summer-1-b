@@ -6,8 +6,15 @@ serve(async (req) => {
   console.log(pathname);
 
   if (req.method === "GET" && pathname === "/welcome-message") {
-    return new Response("jigインターンへようこそ！");
+    return new Response("I have a pen.");
   }
+  if (req.method === "POST" && pathname === "/welcome-message") {
+    const requestJson = await req.json();
+    const nextWord = requestJson.nextWord;
+    console.log(nextWord);
+    return new Response(nextWord, { status: 200 });
+  }
+
 
   return serveDir(req, {
     fsRoot: "public",

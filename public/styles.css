@@ -1,0 +1,26 @@
+body {
+    background: #c1deb8;
+    display:flex;
+    height: 100vh;
+}
+
+.map {
+    flex: 0.7;
+    overflow-x: hidden;
+    scrollbar-width: none;
+}
+
+.sidebar {
+    flex: 0.3;
+    min-width: 250px;
+}
+
+.required {
+    color: red;
+    font-weight: bold;
+}
+
+#map {
+    min-height: 100%;
+    min-width: 100%;
+}
