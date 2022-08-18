@@ -114,14 +114,6 @@
             <div id="map"></div>
         </div>
     </div>
-
-    <div class="shosai">
-        <p >ピンの情報</p>
-        <div id ='user'></div>
-        <div id ='lat'></div>
-        <div id ='lng'></div>
-        <div id ='date'></div>
-    </div>
 </div>
 
 <script type="module">
@@ -334,26 +326,16 @@
                 `;
 
                 var popup = L.popup({maxWidth:350}).setContent(content);
-                markers[num]=L.marker([shosai.lat, shosai.long], { title: shosai.user_id }).bindPopup(popup).addTo(mymap).on( 'click', function(e) {  clickEvt(e); });
+                markers[num]=L.marker([shosai.lat, shosai.long], { title: shosai.user_id }).bindPopup(popup).addTo(mymap);
                 markers[num].user = shosai.user_id;
                 markers[num].lat = shosai.lat;
                 markers[num].lng = shosai.long;
                 markers[num].date = shosai.date;
-
             }
 
             // 地図の中心座標とズームレベルを設定する
             mymap.setView([35.943306, 136.200500], 17);
         }
-
-        //マーカークリック
-        function clickEvt(e){
-            document.getElementById("user").innerHTML = "ユーザー:"+e.target.user;
-            document.getElementById("lat").innerHTML = "緯度:"+e.target.lat;
-            document.getElementById("lng").innerHTML = "経度"+e.target.lng;
-            document.getElementById("date").innerHTML = "日時:"+e.target.date;
-        }
-
     });
 
     /*
