@@ -34,14 +34,18 @@
             <h1>⛽自販機を登録</h1>
 
             <div class="col-6 mb-3">
-                <label for="userNameInput" class="form-label"><b>🍹名前</b></label>
+                <label for="userNameInput" class="form-label">
+                    <i class="bi-tag-fill"></i>
+                    <b>名前</b>
+                </label>
                 <input type="text" class="form-control" id="userNameInput" placeholder="例) タナカ　タロウ">
             </div>
 
             <div class="col-6 mb-3">
                 <label for="latitudeInput">
                     <span class="required">*</span>
-                    <span class="form-title"><b>🍸緯度</b></span> <br>
+                    <i class="bi-compass"></i>
+                    <span class="form-title"><b>緯度</b></span>
                 </label>
                 <input type="number" class="form-control" id ="latitudeInput" min="-90.0" max="90.0" step="0.0000001" placeholder="例) 35.6323207" required>
             </div>
@@ -49,19 +53,24 @@
             <div class="col-6 mb-3">
                 <label for="longitudeInput">
                     <span class="required">*</span>
-                    <span class="form-title"><b>🧃経度</b></span> <br>
+                    <i class="bi-compass-fill"></i>
+                    <span class="form-title"><b>経度</b></span>
                 </label>
                 <input type="number" class="form-control" id ="longitudeInput" min="-180.0" max="180.0" step="0.0000001" placeholder="例) 139.8789308" required>
             </div>
 
             <div class="col-4 mb-3">
-                <button id="getLocation" class="btn btn-secondary">現在位置を取得</button>
+                <button id="getLocation" class="btn btn-secondary">
+                    <i class="bi-globe me-1"></i>
+                    現在位置を取得
+                </button>
             </div>
 
             <div class="col-8 mb-3">
                 <label for="photoInput">
                     <span class="required">*</span>
-                    <span class="form-title"><b>📸自動販売機の写真</b></span>
+                    <i class="bi-camera-fill"></i>
+                    <span class="form-title"><b>自動販売機の写真</b></span>
                 </label>
                 <input type="file" class="form-control" id="photoInput" accept="image/*" required>
 
@@ -69,7 +78,10 @@
             </div>
 
             <div class="mb-5">
-                <button id="sendForm" class="col-2 me-3 btn btn-success" disabled>送信</button>
+                <button id="sendForm" class="col-2 me-3 btn btn-success" disabled>
+                    <i class="bi-send me-1"></i>
+                    送信
+                </button>
 
                 <div id="successMessage" class="col-6 fade-in" style="color: green; display: none">
                     <p>
