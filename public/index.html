@@ -15,56 +15,71 @@
 </head>
 
 <body>
-  <div class="sidebar">
-    <h1>テスト入力フォーム</h1>
+    <div class="all-item">
+        <div class="navigation">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="/index.html">Vending Machine Searcher(仮)</a>
+                </div>
+                <button id="signUp" class="col-1 me-3 btn btn-outline-secondary" type="button">サインアップ</button>
+                <a id="signIn" href="/signin.html" class="col-1" style="text-align: center">サインイン</a>
+            </nav>
+        </div>
 
-    <div class="col-5 mb-3">
-        <label for="userNameInput" class="form-label"><b>名前</b></label>
-        <input type="text" class="form-control" id="userNameInput">
+        <div class="main">
+            <div class="sidebar">
+                <h1>テスト入力フォーム</h1>
+
+                <div class="col-10 mb-3">
+                    <label for="userNameInput" class="form-label"><b>名前</b></label>
+                    <input type="text" class="form-control" id="userNameInput">
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label for="latitudeInput">
+                        <span class="required">*</span>
+                        <span><b>緯度</b></span> <br>
+                    </label>
+                    <input type="number" class="form-control" id ="latitudeInput" min="-90.0" max="90.0" step="0.0000001" required>
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label for="longitudeInput">
+                        <span class="required">*</span>
+                        <span><b>経度</b></span> <br>
+                    </label>
+                    <input type="number" class="form-control" id ="longitudeInput" min="-180.0" max="180.0" step="0.0000001" required>
+                </div>
+
+                <div class="col-4 mb-3">
+                    <button id="getLocation" class="btn btn-secondary">現在位置を取得</button>
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label for="photoInput">
+                        <span class="required">*</span>
+                        <span><b>自動販売機の写真</b></span>
+                    </label>
+                    <input type="file" class="form-control" id="photoInput" accept="image/*" onchange="postImage(event)" required>
+
+                    <img id="thumbnail" class="img-thumbnail" alt="サムネイル" src="" hidden>
+                </div>
+
+                <div class="col-4 mb-3">
+                    <button id="sendForm" class="btn btn-success" disabled>送信</button>
+                </div>
+
+                <div class="col-4 mb-3">
+                    <label for="debug"><span><b>デバッグ用</b></span></label>
+                    <textarea id="debug" class="form-control" rows="15" cols="60"></textarea>
+                </div>
+            </div>
+
+            <div class="map">
+                <div id="map"></div>
+            </div>
+        </div>
     </div>
-
-    <div class="col-2 mb-3">
-        <label for="latitudeInput">
-            <span class="required">*</span>
-            <span><b>緯度</b></span> <br>
-        </label>
-        <input type="number" class="form-control" id ="latitudeInput" min="-90.0" max="90.0" step="0.0000001" required>
-    </div>
-
-    <div class="col-2 mb-3">
-        <label for="longitudeInput">
-            <span class="required">*</span>
-            <span><b>経度</b></span> <br>
-        </label>
-        <input type="number" class="form-control" id ="longitudeInput" min="-180.0" max="180.0" step="0.0000001" required>
-    </div>
-
-    <div class="col-2 mb-3">
-        <button id="getLocation" class="btn btn-secondary">現在位置を取得</button>
-    </div>
-
-    <div class="col-5 mb-3">
-        <label for="photoInput">
-            <span class="required">*</span>
-            <span><b>自動販売機の写真</b></span>
-        </label>
-        <input type="file" class="form-control" id="photoInput" accept="image/*" onchange="postImage(event)" required>
-
-        <img id="thumbnail" class="img-thumbnail" alt="サムネイル" src="" hidden>
-    </div>
-
-    <div class="col-2 mb-3">
-        <button id="sendForm" class="btn btn-success" disabled>送信</button>
-    </div>
-
-    <div class="col-4 mb-3">
-        <label for="debug"><span><b>デバッグ用</b></span></label>
-        <textarea id="debug" class="form-control" rows="15" cols="60"></textarea>
-    </div>
-  </div>
-  <div class="map">
-    <div id="map"></div>
-  </div>
 
     <script type="module">
       // ランダムなUUIDの生成
