@@ -228,10 +228,10 @@
                         contentType: "application/json",
                         data: jsonString,
                         dataType: "json"
+                    }).done(function () {
+                        // 投稿が終わったらリロード
+                        location.reload();
                     });
-
-                    // リロード
-                    location.reload();
                 });
             });
 
