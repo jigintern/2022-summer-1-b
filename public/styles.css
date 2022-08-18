@@ -62,7 +62,5 @@ body {
     min-width: 100%;
 }
 .shosai{
-    position:absolute;
-    top:205%;
-    left:60%;
+    transform: translateX(60%)
 }
