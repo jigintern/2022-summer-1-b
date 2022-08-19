@@ -10,7 +10,7 @@
 - [**おじり**](https://github.com/shiojiriryouta)（塩尻）
 - [**ソー**](https://github.com/SoNariyama)（成山）
 - [**ミッキー**](https://github.com/mikishoma)（三鬼）
-- メンターのなべさん
+- メンターの [**なべ**](https://github.com/nabe1005) さん
 
 ### 概要
 - 自販機の写真を撮影してユーザーが投稿出来るようなフォームを作成する
