@@ -34,9 +34,8 @@ body {
 }
 
 .map {
-    flex: 0.6;
+    flex: 0.5;
     overflow-x: hidden;
-    scrollbar-width: none;
     border: 20px solid #76c9d8;
 }
 
@@ -60,4 +59,7 @@ body {
 #map {
     min-height: 100%;
     min-width: 100%;
+}
+.shosai{
+    transform: translateX(60%)
 }
