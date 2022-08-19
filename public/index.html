@@ -5,6 +5,7 @@
     <link rel="icon" href="https://3.bp.blogspot.com/-CGjU9gYp1LY/V3o2fXLCuzI/AAAAAAAA8HE/SovGs2dke-EWICh2sX--HlBRkyMbhryAACLcB/s800/machine_jidouhanbaiki.png">
     <meta charset="UTF-8"/>
 
+    <link rel="icon" href="https://3.bp.blogspot.com/-CGjU9gYp1LY/V3o2fXLCuzI/AAAAAAAA8HE/SovGs2dke-EWICh2sX--HlBRkyMbhryAACLcB/s800/machine_jidouhanbaiki.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css"/>
     <link rel="stylesheet" href="styles.css"/>
@@ -155,6 +156,7 @@
                         <th scope="col">#</th>
                         <th scope="col">画像</th>
                         <th scope="col">ユーザーID</th>
+                        <th scope="col">ピン</th>
                     </tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
@@ -186,15 +188,18 @@
                 const photo = json[id]["photo"];
                 const user_id = json[id]["user_id"];
 
-                body.append(
-                    `
-                        <tr style="text-align: center; vertical-align: center">
-                            <th scope='row'> ` +
-                    (id + 1) +
-                    ` </th>
-                            <td><img src="${photo}" style="width: auto; height: auto; max-width: 128px; max-height: 128px" alt="Posted Image"></td>
-                            <td>${user_id}</td>
-                        </tr>
+                body.append(`
+                    <tr style="text-align: center; vertical-align: center">
+                        <th scope='row'> ` + (id + 1) +
+                    `</th>
+                        <td><img src="${photo}" style="width: auto; height: auto; max-width: 128px; max-height: 128px" alt="Posted Image"></td>
+                        <td>${user_id}</td>
+                        <td>
+                            <button class="pinMove btn btn-secondary" data-lat='${json[id]["lat"]}' data-long='${json[id]["long"]}'>
+                                <i class="bi-pin-fill"></i>
+                            </button>
+                        </td>
+                    </tr>
                     `
                 );
             }
@@ -357,6 +362,16 @@
                     location.reload();
                 });
             });
+        });
+
+        // 「ピン」ボタンを押すとマップが移動
+        $(document).on("click", ".pinMove", function () {
+            const pinButton = $(this);
+            const lat = pinButton.data("lat");
+            const long = pinButton.data("long");
+            console.log("Lat: " + lat);
+            console.log("Long: " + long);
+            mymap.setView([lat, long], 17);
         });
 
         var show = 0;
