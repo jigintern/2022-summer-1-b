@@ -34,7 +34,7 @@ serve(async (req) => {
     // データベースに接続するためのURL?
     const databaseUrl = "postgres://postgres:jigintern2022@db.tderfuecifzjrpfwsplc.supabase.co:6543/postgres";
     // 接続
-    const pool = new postgres.Pool(databaseUrl, 3, true);
+    const pool = new postgres.Pool(databaseUrl, 400, true);
     const connection = await pool.connect();
 
     try {
