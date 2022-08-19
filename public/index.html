@@ -155,6 +155,7 @@
                         <th scope="col">#</th>
                         <th scope="col">画像</th>
                         <th scope="col">ユーザーID</th>
+                        <th scope="col">ピン</th>
                     </tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
@@ -186,15 +187,18 @@
                 const photo = json[id]["photo"];
                 const user_id = json[id]["user_id"];
 
-                body.append(
-                    `
-                        <tr style="text-align: center; vertical-align: center">
-                            <th scope='row'> ` +
-                    (id + 1) +
-                    ` </th>
-                            <td><img src="${photo}" style="width: auto; height: auto; max-width: 128px; max-height: 128px" alt="Posted Image"></td>
-                            <td>${user_id}</td>
-                        </tr>
+                body.append(`
+                    <tr style="text-align: center; vertical-align: center">
+                        <th scope='row'> ` + (id + 1) +
+                    `</th>
+                        <td><img src="${photo}" style="width: auto; height: auto; max-width: 128px; max-height: 128px" alt="Posted Image"></td>
+                        <td>${user_id}</td>
+                        <td>
+                            <button class="btn btn-secondary pin-move-button" data-lat='${json[id]["lat"]}' data-long='${json[id]["long"]}'>
+                                <i class="bi-pin-fill"></i>
+                            </button>
+                        </td>
+                    </tr>
                     `
                 );
             }
@@ -357,6 +361,16 @@
                     location.reload();
                 });
             });
+        });
+
+        // 「ピン」ボタンを押すとマップが移動
+        const pinButton = $(".pin-move-button");
+        pinButton.on("click", function () {
+            console.log()
+
+            const lat = pinButton.data("lat");
+            const long = pinButton.data("long");
+            mymap.setView(lat, long, 17);
         });
 
         var show = 0;
