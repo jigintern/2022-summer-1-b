@@ -207,6 +207,7 @@
 
         let photo = "";
         let mymap;
+        let myPin = L.marker();
 
         // 写真をデータベースにアップロード
         async function postImage(event) {
@@ -394,7 +395,7 @@
                         '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">国土地理院</a>',
                 }
             ).addTo(mymap);
-            let myPin = L.marker(
+            myPin = L.marker(
                 [$("#latitudeInput").val(), $("#longitudeInput").val()],
                 {title: "新規作成", draggable: true}
             ).addTo(mymap);
