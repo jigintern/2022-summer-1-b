@@ -194,7 +194,7 @@
                         <td><img src="${photo}" style="width: auto; height: auto; max-width: 128px; max-height: 128px" alt="Posted Image"></td>
                         <td>${user_id}</td>
                         <td>
-                            <button class="btn btn-secondary pin-move-button" data-lat='${json[id]["lat"]}' data-long='${json[id]["long"]}'>
+                            <button class="pinMove btn btn-secondary" data-lat='${json[id]["lat"]}' data-long='${json[id]["long"]}'>
                                 <i class="bi-pin-fill"></i>
                             </button>
                         </td>
@@ -364,13 +364,13 @@
         });
 
         // 「ピン」ボタンを押すとマップが移動
-        const pinButton = $(".pin-move-button");
-        pinButton.on("click", function () {
-            console.log()
-
+        $(document).on("click", ".pinMove", function () {
+            const pinButton = $(this);
             const lat = pinButton.data("lat");
             const long = pinButton.data("long");
-            mymap.setView(lat, long, 17);
+            console.log("Lat: " + lat);
+            console.log("Long: " + long);
+            mymap.setView([lat, long], 17);
         });
 
         var show = 0;
