@@ -18,7 +18,6 @@ body {
 }
 .main{
     padding : 40px;
-    
 }
 
 .all-item {
@@ -36,6 +35,8 @@ body {
 .map {
     flex: 0.5;
     overflow-x: hidden;
+    max-width: 960px;
+    max-height: 720px;
     border: 20px solid #76c9d8;
 }
 
